@@ -5,6 +5,7 @@
 # Instalação
 
 ## 1 - Crie uma nova instância EC2 **Ubuntu** na AWS Educate, segue um tutorial de como criar uma instância na AWS: https://www.youtube.com/watch?v=4kufR3fFEjM
+### 1.1 - Lembre-se de habilitar a porta 80 (HTTP) em sua instância para a API poder funcionar.
 
 ## 2 - Instale o Putty em seu computador para acessar sua instância EC2 utilizando o IP público do mesmo.
 ### 2.1 - Utilize o Putty para converter sua chave .pem para .ppk como mostrado no tutorial: https://medium.com/@praneeth.jm/launching-and-connecting-to-an-aws-ec2-instance-6678f660bbe6
@@ -19,7 +20,22 @@
 ### 3.3 - Execute-o.
 <code>./configAPI.sh</code>
 
+### 3.4 - Prontinho! A API já está no ar e aguardando por requisições. Olhe abaixo o que a mesma é capaz de retornar.
+
 # Funcionamento
+
+## Exemplos de requisições aceitas:
+
+* Para requisitar toda a base de Ocorrências:
+> <IP Público de sua instância>/
+* Para obter os 10 maiores valores de qualquer requisição:
+> <IP Público de sua instância>/?ranking=10
+* Para requistar as vítimas fatais do ano de 2018:
+> <IP Público de sua instância>/vitimas?ano=2018
+* Para obter as ocorrências de Estupro no mês de Janeiro em Tocantins:
+> <IP Público de sua instância>/ocorrencias?uf=Tocantins&tipo=Estupro&mes=janeiro
+* Para requisitar as vítimas fatais em Cruz-CE em Janeiro de 2020:
+> <IP Público de sua instância>/vitimas_municipios?cid=Cruz&ano=2020&mes=jan&uf=ce
 
 ## Em construção ...
 
