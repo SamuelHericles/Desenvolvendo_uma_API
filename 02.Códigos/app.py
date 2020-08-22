@@ -26,23 +26,23 @@ api = Api(app)
 
 
 def arguments(args):
-    uf = args['uf'] if 'uf' in args else ''
-    tipo = args['tipo'] if 'tipo' in args else ''
-    ano = int(args['ano']) if 'ano' in args else ''
-    mes = args['mes'] if 'mes' in args else ''
-    r = int(args['ranking']) if 'ranking' in args else ''
+    uf    = args['uf'] if 'uf' in args else ''
+    tipo  = args['tipo'] if 'tipo' in args else ''
+    ano   = int(args['ano']) if 'ano' in args else ''
+    mes   = args['mes'] if 'mes' in args else ''
+    r     = int(args['ranking']) if 'ranking' in args else ''
     order = args['order'] if 'order' in args else 'DESC'
     return uf, tipo, ano, mes, r, order
 
 
 def argumentsMunicipios(args):
-    cid = args['cid'] if 'cid' in args else ''
-    uf = args['uf'] if 'uf' in args else ''
+    cid    = args['cid'] if 'cid' in args else ''
+    uf     = args['uf'] if 'uf' in args else ''
     regiao = args['regiao'] if 'tipo' in args else ''
-    mes = args['mes'] if 'mes' in args else ''
-    ano = args['ano'] if 'ano' in args else ''
-    r = int(args['ranking']) if 'ranking' in args else ''
-    order = args['order'] if 'order' in args else 'DESC'
+    mes    = args['mes'] if 'mes' in args else ''
+    ano    = args['ano'] if 'ano' in args else ''
+    r      = int(args['ranking']) if 'ranking' in args else ''
+    order  = args['order'] if 'order' in args else 'DESC'
     return cid, uf, regiao, mes, ano, r, order
 
 
