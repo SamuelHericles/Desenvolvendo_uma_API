@@ -32,7 +32,8 @@ def arguments(args):
     mes   = args['mes'] if 'mes' in args else ''
     r     = int(args['ranking']) if 'ranking' in args else ''
     order = args['order'] if 'order' in args else 'DESC'
-    return uf, tipo, ano, mes, r, order
+    est   = args['est'] if 'est' in args else ''
+    return uf, tipo, ano, mes, r, order,est
 
 
 def argumentsMunicipios(args):
@@ -43,13 +44,14 @@ def argumentsMunicipios(args):
     ano    = args['ano'] if 'ano' in args else ''
     r      = int(args['ranking']) if 'ranking' in args else ''
     order  = args['order'] if 'order' in args else 'DESC'
-    return cid, uf, regiao, mes, ano, r, order
+    est    = args['est'] if 'est' in args else ''
+    return cid, uf, regiao, mes, ano, r, order,est
 
 
 class Ocorrencias(Resource):
     def get(self):
-        uf, tipo, ano, mes, r, order = arguments(request.args)
-        data = get_ocorrencias(dfOcorrencias, uf, tipo, ano, mes)
+        uf, tipo, ano, mes, r, order,est = arguments(request.args)
+        data = get_ocorrencias(dfOcorrencias, uf, tipo, ano, mes, est)
         if r != '':  # Foi requisitado o ranking
             data = data.sort_values('Ocorrências', ascending=(order == 'ASC')).iloc[:r]
         return loads(data.to_json(orient="records"))
@@ -57,8 +59,8 @@ class Ocorrencias(Resource):
 
 class Vitimas(Resource):
     def get(self):
-        uf, tipo, ano, mes, r, order = arguments(request.args)
-        data = get_ocorrencias(dfVitimas, uf, tipo, ano, mes)
+        uf, tipo, ano, mes, r, order,est = arguments(request.args)
+        data = get_ocorrencias(dfVitimas, uf, tipo, ano, mes, est)
         if r != '':  # Foi requisitado o ranking
             data = data.sort_values('Vítimas', ascending=(order == 'ASC')).iloc[:r]
         return loads(data.to_json(orient="records"))
@@ -66,14 +68,14 @@ class Vitimas(Resource):
 
 class Municipios(Resource):
     def get(self):
-        cid, uf, regiao, mes, ano, r, order = argumentsMunicipios(request.args)
-        data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
+        cid, uf, regiao, mes, ano, r, order,est = argumentsMunicipios(request.args)
+        data = get_vitimas_municipios(cid, uf, regiao, mes, ano, est)
         if r != '':  # Foi requisitado o ranking
             data = data.sort_values('Vítimas', ascending=(order == 'ASC')).iloc[:r]
         return loads(data.to_json(orient="records"))
 
 
-def get_ocorrencias(df, uf='', tipo_crime='', ano='', mes=''):
+def get_ocorrencias(df, uf='', tipo_crime='', ano='', mes='',est=''):
     '''
     Função que retorna parte do dataframe requerido
     :parameters: Filtros
@@ -88,13 +90,21 @@ def get_ocorrencias(df, uf='', tipo_crime='', ano='', mes=''):
         condition &= (df['Ano'] == ano)
     if mes != '':
         condition &= (df['Mês'].str.contains(mes.lower()))
+    if est != '':
+        if est == 'sum':
+            condition &= (df.sum().astype(str))
+        if est == 'md':
+            condition &= (df.mean().astype(str))
+        if est == 'var':
+            condition &= (df.var().astype(str))
+
     try:
         return df.loc[condition]
     except KeyError:
         return df
 
 
-def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano=''):
+def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano='',est=''):
     condition = True
     if municipio != '':
         condition &= (dfVitimasMunicipios['Município'].str.contains(municipio))
@@ -106,6 +116,13 @@ def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano=''):
         condition &= (dfVitimasMunicipios['Mês/Ano'].astype(str).str.contains(MES[mes[:3].lower()]))
     if ano != '':
         condition &= (dfVitimasMunicipios['Mês/Ano'].astype(str).str.contains(ano))
+    if est != '':
+        if est == 'sum':
+            condition &= (dfVitimasMunicipios['Mês/Ano'].sum().astype(str))
+        if est == 'md':
+            condition &= (dfVitimasMunicipios['Mês/Ano'].mean().astype(str))
+        if est == 'var':
+            condition &= (dfVitimasMunicipios['Mês/Ano'].var().astype(str))
     try:
         return dfVitimasMunicipios.loc[condition]
     except KeyError:
