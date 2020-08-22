@@ -47,7 +47,8 @@ sudo pip3 install flask_restful
 sudo pip3 install xlrd
 
 # Move o arquivo para rodar o servidor na marquina
-sudo mv flaskapp  /etc/nginx/sites-enabled/
+sudo mv flaskapp /etc/nginx/sites-enabled/
+
 sudo service nginx restart
 cd
 gunicorn3 app:app
