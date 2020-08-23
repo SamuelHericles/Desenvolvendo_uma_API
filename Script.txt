@@ -1,0 +1,28 @@
+Ao criar a m�quina Ubuntu certificar-se que adicionou a porta 80 na lista do firewall
+Abrir comunica��o SSH pelo Putty de acordo com o tutorial
+
+sudo apt-get update
+sudo apt-get install python3
+sudo apt-get install nginx
+sudo apt-get install gunicorn3
+sudo apt install python3-pip
+pip3 install pandas flask flask_restful xlrd
+
+Copiar o arquivo app.py que quer executar dentro da pasta de usu�rio /home/ubuntu/flaskapp pelo WinSCP
+
+cd /etc/nginx/sites-enabled/
+sudo nano flaskapp
+server {
+   listen 80;
+   server_name: 3.85.175.25;
+
+   location / {
+      proxy_pass http://127.0.0.1:8000;
+   }
+}
+
+sudo service nginx restart
+cd
+cd flaskapp
+gunicorn3 app:app
+

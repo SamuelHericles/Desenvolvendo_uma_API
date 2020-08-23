@@ -26,6 +26,7 @@ api = Api(app)
 
 
 def arguments(args):
+    print(args)
     uf    = args['uf'] if 'uf' in args else ''
     tipo  = args['tipo'] if 'tipo' in args else ''
     ano   = int(args['ano']) if 'ano' in args else ''
@@ -51,7 +52,9 @@ def argumentsMunicipios(args):
 class Ocorrencias(Resource):
     def get(self):
         uf, tipo, ano, mes, r, order,est = arguments(request.args)
-        data = get_ocorrencias(dfOcorrencias, uf, tipo, ano, mes, est)
+        data = get_ocorrencias(dfOcorrencias, uf, tipo, ano, mes)
+        if est != '':
+            data = data.agg([est])
         if r != '':  # Foi requisitado o ranking
             data = data.sort_values('Ocorrências', ascending=(order == 'ASC')).iloc[:r]
         return loads(data.to_json(orient="records"))
@@ -60,7 +63,9 @@ class Ocorrencias(Resource):
 class Vitimas(Resource):
     def get(self):
         uf, tipo, ano, mes, r, order,est = arguments(request.args)
-        data = get_ocorrencias(dfVitimas, uf, tipo, ano, mes, est)
+        data = get_ocorrencias(dfVitimas, uf, tipo, ano, mes)
+        if est != '':
+            data = data.agg([est])        
         if r != '':  # Foi requisitado o ranking
             data = data.sort_values('Vítimas', ascending=(order == 'ASC')).iloc[:r]
         return loads(data.to_json(orient="records"))
@@ -69,7 +74,9 @@ class Vitimas(Resource):
 class Municipios(Resource):
     def get(self):
         cid, uf, regiao, mes, ano, r, order,est = argumentsMunicipios(request.args)
-        data = get_vitimas_municipios(cid, uf, regiao, mes, ano, est)
+        data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
+        if est != '':
+             data = data.agg([est])
         if r != '':  # Foi requisitado o ranking
             data = data.sort_values('Vítimas', ascending=(order == 'ASC')).iloc[:r]
         return loads(data.to_json(orient="records"))
@@ -90,14 +97,6 @@ def get_ocorrencias(df, uf='', tipo_crime='', ano='', mes='',est=''):
         condition &= (df['Ano'] == ano)
     if mes != '':
         condition &= (df['Mês'].str.contains(mes.lower()))
-    if est != '':
-        if est == 'sum':
-            condition &= (df.sum().astype(str))
-        if est == 'md':
-            condition &= (df.mean().astype(str))
-        if est == 'var':
-            condition &= (df.var().astype(str))
-
     try:
         return df.loc[condition]
     except KeyError:
@@ -116,13 +115,6 @@ def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano='',est=''
         condition &= (dfVitimasMunicipios['Mês/Ano'].astype(str).str.contains(MES[mes[:3].lower()]))
     if ano != '':
         condition &= (dfVitimasMunicipios['Mês/Ano'].astype(str).str.contains(ano))
-    if est != '':
-        if est == 'sum':
-            condition &= (dfVitimasMunicipios['Mês/Ano'].sum().astype(str))
-        if est == 'md':
-            condition &= (dfVitimasMunicipios['Mês/Ano'].mean().astype(str))
-        if est == 'var':
-            condition &= (dfVitimasMunicipios['Mês/Ano'].var().astype(str))
     try:
         return dfVitimasMunicipios.loc[condition]
     except KeyError:
