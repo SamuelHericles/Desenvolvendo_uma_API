@@ -24,6 +24,8 @@
 
 # Funcionamento
 
+## Confira a documentação completa da API [aqui](https://docs.google.com/document/d/1yBTdEPZ05kxDgXAp0umdSry_XSp_ont2205MljGQAKA/edit?usp=sharing).
+
 ## Exemplos de requisições aceitas:
 
 * Para requisitar toda a base de Ocorrências:
@@ -33,7 +35,7 @@
 * Para requistar as vítimas fatais do ano de 2018:
 > <IP Público de sua instância>/vitimas?ano=2018
 * Para obter as ocorrências de Estupro no mês de Janeiro em Tocantins:
-> <IP Público de sua instância>/ocorrencias?uf=Tocantins&tipo=Estupro&mes=janeiro
+> <IP Público de sua instância>/ocorrencias?uf=TO&tipo=Estupro&mes=janeiro
 * Para requisitar as vítimas fatais em Cruz-CE em Janeiro de 2020:
 > <IP Público de sua instância>/vitimas_municipios?cid=Cruz&ano=2020&mes=jan&uf=ce
 
