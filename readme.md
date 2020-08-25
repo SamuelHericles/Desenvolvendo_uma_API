@@ -29,13 +29,13 @@
 ## Exemplos de requisições aceitas:
 
 * Para requisitar toda a base de Ocorrências:
-> <IP Público de sua instância>/
-* Para obter os 10 maiores valores de qualquer requisição:
-> <IP Público de sua instância>/?ranking=10
+> <IP Público de sua instância>/ocorrencias
+* Para obter os 10 maiores registros de vítimas:
+> <IP Público de sua instância>/vitimas?ranking=10
 * Para requistar as vítimas fatais do ano de 2018:
 > <IP Público de sua instância>/vitimas?ano=2018
 * Para obter as ocorrências de Estupro no mês de Janeiro em Tocantins:
-> <IP Público de sua instância>/ocorrencias?uf=TO&tipo=Estupro&mes=janeiro
+> <IP Público de sua instância>/ocorrencias?uf=TO&crime=Estupro&mes=janeiro
 * Para requisitar as vítimas fatais em Cruz-CE em Janeiro de 2020:
 > <IP Público de sua instância>/vitimas_municipios?cid=Cruz&ano=2020&mes=jan&uf=ce
 
