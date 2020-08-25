@@ -3,10 +3,12 @@ from flask import Flask
 from flask_restful import Resource, Api, request
 from json import loads
 
+
 urlCidades = 'https://github.com/SamuelHericles/Desenvolvendo_uma_API/blob/master/01.Dados/indicadoressegurancapublicamunicmar20.xlsx?raw=true'
 urlUFs = 'https://github.com/SamuelHericles/Desenvolvendo_uma_API/blob/master/01.Dados/indicadoressegurancapublicaufmar20.xlsx?raw=true'
 
 dataframe = pd.ExcelFile(urlUFs)
+
 dfOcorrencias = pd.read_excel(dataframe, 'Ocorrências')
 dfVitimas = pd.read_excel(dataframe, 'Vítimas')
 
@@ -53,6 +55,7 @@ class Ocorrencias(Resource):
     def get(self):
         uf, tipo, ano, mes, r, order,est = arguments(request.args)
         data = get_ocorrencias(dfOcorrencias, uf, tipo, ano, mes)
+
         if est != '':
             data = data.agg([est])
         if r != '':  # Foi requisitado o ranking
@@ -64,6 +67,7 @@ class Vitimas(Resource):
     def get(self):
         uf, tipo, ano, mes, r, order,est = arguments(request.args)
         data = get_ocorrencias(dfVitimas, uf, tipo, ano, mes)
+
         if est != '':
             data = data.agg([est])        
         if r != '':  # Foi requisitado o ranking
