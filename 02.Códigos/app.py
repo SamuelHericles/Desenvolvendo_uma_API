@@ -11,8 +11,7 @@ MES = {'jan': '-01-', 'fev': '-02-', 'mar': '-03-', 'abr': '-04-', 'mai': '-05-'
 UFs = {'Acre': 'AC', 'Alagoas': 'AL', 'Amapá': 'AP', 'Amazonas': 'AM', 'Bahia': 'BA', 'Ceará': 'CE',
        'Distrito Federal': 'DF', 'Espírito Santo': 'ES', 'Goiás': 'GO', 'Maranhão': 'MA', 'Mato Grosso': 'MT',
        'Mato Grosso do Sul': 'MS', 'Minas Gerais': 'MG', 'Pará': 'PA', 'Paraíba': 'PB', 'Paraná': 'PR',
-       'Pernambuco': 'PE', 'Piauí': 'PI', 'Rio de Janeiro': 'RJ', 'Rio Grande do Norte': 'RN',
-       'Rio Grande do Sul': 'RS',
+       'Pernambuco': 'PE', 'Piauí': 'PI', 'Rio de Janeiro': 'RJ', 'Rio Grande do Norte': 'RN', 'Rio Grande do Sul': 'RS',
        'Rondônia': 'RO', 'Roraima': 'RR', 'Santa Catarina': 'SC', 'São Paulo': 'SP', 'Sergipe': 'SE', 'Tocantins': 'TO'}
 
 # Carrega bases dos estados
@@ -25,7 +24,8 @@ for UF in dfOcorrencias['UF'].unique():  # Modifica UF de cada registro. Ex.: Ac
 
 # Carrega bases dos municipios e as concatena
 dFrame = pd.ExcelFile(f'https://github.com/SamuelHericles/Desenvolvendo_uma_API/blob/master/01.Dados/{baseMunicipios}')
-dfVitimasMunicipios = pd.concat([pd.read_excel(dFrame, sheet) for sheet in dFrame.sheet_names], ignore_index=True)
+# dfVitimasMunicipios = pd.concat([pd.read_excel(dFrame, sheet) for sheet in dFrame.sheet_names], ignore_index=True)
+dfVitimasMunicipios = pd.concat(pd.read_excel(dFrame, sheet_name=None))
 
 
 def arguments(args):
@@ -54,41 +54,50 @@ def argumentsMunicipios(args):
 
 class Ocorrencias(Resource):
     def get(self):
-        uf, tipo, ano, mes, r, order, est = arguments(request.args)
-        data = get_ocorrencias(dfOcorrencias, uf, tipo, ano, mes)
-        if est != '':
-            data = data.agg([est])
-        if r != '':  # Foi requisitado o ranking
-            data = data.sort_values('Ocorrências', ascending=(order == 'ASC')).iloc[:r]
-        elif order != '':  # Foi requisitado ordenamento sem ranking
-            data = data.sort_values('Ocorrências', ascending=(order == 'ASC'))
-        return loads(data.to_json(orient="records"))
+        try:
+            uf, tipo, ano, mes, r, order, est = arguments(request.args)
+            data = get_ocorrencias(dfOcorrencias, uf, tipo, ano, mes)
+            if est != '':
+                data = data.agg([est])
+            if r != '':  # Foi requisitado o ranking
+                data = data.sort_values('Ocorrências', ascending=(order == 'ASC')).iloc[:r]
+            elif order != '':  # Foi requisitado ordenamento sem ranking
+                data = data.sort_values('Ocorrências', ascending=(order == 'ASC'))
+            return loads(data.to_json(orient="records"))
+        except Exception as e:
+            return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
 
 class Vitimas(Resource):
     def get(self):
-        uf, tipo, ano, mes, r, order, est = arguments(request.args)
-        data = get_ocorrencias(dfVitimas, uf, tipo, ano, mes)
-        if est != '':
-            data = data.agg([est])
-        if r != '':  # Foi requisitado o ranking
-            data = data.sort_values('Vítimas', ascending=(order == 'ASC')).iloc[:r]
-        elif order != '':  # Foi requisitado ordenamento sem ranking
-            data = data.sort_values('Vítimas', ascending=(order == 'ASC'))
-        return loads(data.to_json(orient="records"))
+        try:
+            uf, tipo, ano, mes, r, order, est = arguments(request.args)
+            data = get_ocorrencias(dfVitimas, uf, tipo, ano, mes)
+            if est != '':
+                data = data.agg([est])
+            if r != '':  # Foi requisitado o ranking
+                data = data.sort_values('Vítimas', ascending=(order == 'ASC')).iloc[:r]
+            elif order != '':  # Foi requisitado ordenamento sem ranking
+                data = data.sort_values('Vítimas', ascending=(order == 'ASC'))
+            return loads(data.to_json(orient="records"))
+        except Exception as e:
+            return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
 
 class Municipios(Resource):
     def get(self):
-        cid, uf, regiao, mes, ano, r, order, est = argumentsMunicipios(request.args)
-        data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
-        if est != '':
-            data = data.agg([est])
-        if r != '':  # Foi requisitado o ranking
-            data = data.sort_values('Vítimas', ascending=(order == 'ASC')).iloc[:r]
-        elif order != '':  # Foi requisitado ordenamento sem ranking
-            data = data.sort_values('Vítimas', ascending=(order == 'ASC'))
-        return loads(data.to_json(orient="records"))
+        try:
+            cid, uf, regiao, mes, ano, r, order, est = argumentsMunicipios(request.args)
+            data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
+            if est != '':
+                data = data.agg([est])
+            if r != '':  # Foi requisitado o ranking
+                data = data.sort_values('Vítimas', ascending=(order == 'ASC')).iloc[:r]
+            elif order != '':  # Foi requisitado ordenamento sem ranking
+                data = data.sort_values('Vítimas', ascending=(order == 'ASC'))
+            return loads(data.to_json(orient="records"))
+        except Exception as e:
+            return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
 
 def get_ocorrencias(df, uf='', tipo_crime='', ano='', mes='', est=''):
