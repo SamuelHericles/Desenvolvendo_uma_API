@@ -29,7 +29,6 @@ dfVitimasMunicipios = pd.concat(pd.read_excel(dFrame, sheet_name=None))
 
 
 def arguments(args):
-    print(args)
     uf = args['uf'] if 'uf' in args else ''
     tipo = args['tipo'] if 'tipo' in args else ''
     ano = int(args['ano']) if 'ano' in args else ''
@@ -53,32 +52,19 @@ def argumentsMunicipios(args):
 
 
 class Ocorrencias(Resource):
-    def get(self):
+    def get(self, base):
         try:
             uf, tipo, ano, mes, r, order, est = arguments(request.args)
-            data = get_ocorrencias(dfOcorrencias, uf, tipo, ano, mes)
+            if base == "vitimas":
+                data = get_ocorrencias(dfVitimas, uf, tipo, ano, mes)
+            else: 
+                data = get_ocorrencias(dfOcorrencias, uf, tipo, ano, mes)
             if est != '':
                 data = data.agg([est])
             if r != '':  # Foi requisitado o ranking
-                data = data.sort_values('Ocorrências', ascending=(order == 'ASC')).iloc[:r]
+                data = data.sort_values(data.columns[-1], ascending=(order == 'ASC')).iloc[:r]
             elif order != '':  # Foi requisitado ordenamento sem ranking
-                data = data.sort_values('Ocorrências', ascending=(order == 'ASC'))
-            return loads(data.to_json(orient="records"))
-        except Exception as e:
-            return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
-
-
-class Vitimas(Resource):
-    def get(self):
-        try:
-            uf, tipo, ano, mes, r, order, est = arguments(request.args)
-            data = get_ocorrencias(dfVitimas, uf, tipo, ano, mes)
-            if est != '':
-                data = data.agg([est])
-            if r != '':  # Foi requisitado o ranking
-                data = data.sort_values('Vítimas', ascending=(order == 'ASC')).iloc[:r]
-            elif order != '':  # Foi requisitado ordenamento sem ranking
-                data = data.sort_values('Vítimas', ascending=(order == 'ASC'))
+                data = data.sort_values(data.columns[-1], ascending=(order == 'ASC'))
             return loads(data.to_json(orient="records"))
         except Exception as e:
             return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
@@ -106,7 +92,7 @@ def get_ocorrencias(df, uf='', tipo_crime='', ano='', mes='', est=''):
     :parameters: Filtros
     :return: Parcela do dataframe filtrado
     '''
-    condition = True
+    condition = df.index > -1
     if uf != '':
         condition &= df['UF'] == uf
     if tipo_crime != '':
@@ -115,14 +101,13 @@ def get_ocorrencias(df, uf='', tipo_crime='', ano='', mes='', est=''):
         condition &= df['Ano'] == ano
     if mes != '':
         condition &= df['Mês'].str.contains(mes.lower(), case=False)
-    try:
-        return df.loc[condition]
-    except KeyError:
-        return df
+
+    return df.loc[condition]
+    
 
 
 def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano='', est=''):
-    condition = True
+    condition = df.index > -1
     if municipio != '':
         condition &= dfVitimasMunicipios['Município'].str.contains(municipio, case=False)
     if uf != '':
@@ -133,10 +118,9 @@ def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano='', est='
         condition &= dfVitimasMunicipios['Mês/Ano'].astype(str).str.contains(MES[mes[:3].lower()])
     if ano != '':
         condition &= dfVitimasMunicipios['Mês/Ano'].astype(str).str.contains(ano)
-    try:
-        return dfVitimasMunicipios.loc[condition]
-    except KeyError:
-        return dfVitimasMunicipios
+    
+    return dfVitimasMunicipios.loc[condition]
+    
 
 # Exemplos de requisições GET para a API:
 # http://127.0.0.1:5000/
@@ -149,8 +133,7 @@ def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano='', est='
 # API
 app = Flask('Ocorrências Criminais')
 api = Api(app)
-api.add_resource(Ocorrencias, '/ocorrencias', '/')
-api.add_resource(Vitimas, '/vitimas')
+api.add_resource(Ocorrencias, '/<base>')
 api.add_resource(Municipios, '/vitimas_municipios')
 
 if __name__ == '__main__':
