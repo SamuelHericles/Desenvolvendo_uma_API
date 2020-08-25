@@ -128,5 +128,6 @@ api = Api(app)
 api.add_resource(Bases, '/<base>')
 api.add_resource(Perguntas, '/perguntas/<pergunta>') # rota de perguntas
 
+
 if __name__ == '__main__':
     app.run()
