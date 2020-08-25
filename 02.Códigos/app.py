@@ -29,59 +29,37 @@ dfVitimasMunicipios = pd.concat(pd.read_excel(dFrame, sheet_name=None))
 
 
 def arguments(args):
-    #print(args)
-    uf = args['uf'] if 'uf' in args else ''
-    tipo = args['tipo'] if 'tipo' in args else ''
-    ano = int(args['ano']) if 'ano' in args else ''
-    mes = args['mes'] if 'mes' in args else ''
-    r = int(args['ranking']) if 'ranking' in args else ''
-    order = args['order'] if 'order' in args else 'DESC'
-    est = args['est'] if 'est' in args else ''
-    return uf, tipo, ano, mes, r, order, est
-
-
-def argumentsMunicipios(args):
     cid = args['cid'] if 'cid' in args else ''
     uf = args['uf'] if 'uf' in args else ''
     regiao = args['regiao'] if 'tipo' in args else ''
-    mes = args['mes'] if 'mes' in args else ''
+    tipo = args['tipo'] if 'tipo' in args else ''
     ano = args['ano'] if 'ano' in args else ''
+    mes = args['mes'] if 'mes' in args else ''
     r = int(args['ranking']) if 'ranking' in args else ''
     order = args['order'] if 'order' in args else 'DESC'
     est = args['est'] if 'est' in args else ''
-    return cid, uf, regiao, mes, ano, r, order, est
+    return cid, uf, regiao, tipo, ano, mes, r, order, est
 
 
-class Ocorrencias(Resource):
+class Bases(Resource):
     def get(self, base):
         try:
-            uf, tipo, ano, mes, r, order, est = arguments(request.args)
+            cid, uf, regiao, tipo, ano, mes, r, order, est = arguments(request.args)
             if base == "vitimas":
                 data = get_ocorrencias(dfVitimas, uf, tipo, ano, mes)
-            else: 
+            elif base == "vitimas_municipios":
+                data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
+            elif base == "ocorrencias":
                 data = get_ocorrencias(dfOcorrencias, uf, tipo, ano, mes)
+            else:
+                return loads('{"Erro": "Por Favor, verifique a sua requisição."}')
+
             if est != '':
                 data = data.agg([est])
             if r != '':  # Foi requisitado o ranking
                 data = data.sort_values(data.columns[-1], ascending=(order == 'ASC')).iloc[:r]
             elif order != '':  # Foi requisitado ordenamento sem ranking
                 data = data.sort_values(data.columns[-1], ascending=(order == 'ASC'))
-            return loads(data.to_json(orient="records"))
-        except Exception as e:
-            return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
-
-
-class Municipios(Resource):
-    def get(self):
-        try:
-            cid, uf, regiao, mes, ano, r, order, est = argumentsMunicipios(request.args)
-            data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
-            if est != '':
-                data = data.agg([est])
-            if r != '':  # Foi requisitado o ranking
-                data = data.sort_values('Vítimas', ascending=(order == 'ASC')).iloc[:r]
-            elif order != '':  # Foi requisitado ordenamento sem ranking
-                data = data.sort_values('Vítimas', ascending=(order == 'ASC'))
             return loads(data.to_json(orient="records"))
         except Exception as e:
             return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
@@ -99,7 +77,7 @@ def get_ocorrencias(df, uf='', tipo_crime='', ano='', mes='', est=''):
     if tipo_crime != '':
         condition &= df['Tipo Crime'].str.contains(tipo_crime, case=False)
     if ano != '':
-        condition &= df['Ano'] == ano
+        condition &= df['Ano'] == int(ano)
     if mes != '':
         condition &= df['Mês'].str.contains(mes.lower(), case=False)
         
@@ -108,7 +86,7 @@ def get_ocorrencias(df, uf='', tipo_crime='', ano='', mes='', est=''):
 
 
 def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano='', est=''):
-    condition = True
+    condition = dfVitimasMunicipios['Município'].str.len() > 0
     if municipio != '':
         condition &= dfVitimasMunicipios['Município'].str.contains(municipio, case=False)
     if uf != '':
@@ -119,10 +97,9 @@ def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano='', est='
         condition &= dfVitimasMunicipios['Mês/Ano'].astype(str).str.contains(MES[mes[:3].lower()])
     if ano != '':
         condition &= dfVitimasMunicipios['Mês/Ano'].astype(str).str.contains(ano)
-    try:
-        return dfVitimasMunicipios.loc[condition]
-    except KeyError:
-        return dfVitimasMunicipios
+
+    return dfVitimasMunicipios.loc[condition]
+    
 
 # Exemplos de requisições GET para a API:
 # http://127.0.0.1:5000/
@@ -135,9 +112,7 @@ def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano='', est='
 # API
 app = Flask('Ocorrências Criminais')
 api = Api(app)
-api.add_resource(Ocorrencias, '/<base>')
-# api.add_resource(Vitimas, '/vitimas')
-api.add_resource(Municipios, '/vitimas_municipios')
+api.add_resource(Bases, '/<base>')
 
 if __name__ == '__main__':
     app.run()
