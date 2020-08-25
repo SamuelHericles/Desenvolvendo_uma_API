@@ -29,6 +29,7 @@ dfVitimasMunicipios = pd.concat(pd.read_excel(dFrame, sheet_name=None))
 
 
 def arguments(args):
+    #print(args)
     uf = args['uf'] if 'uf' in args else ''
     tipo = args['tipo'] if 'tipo' in args else ''
     ano = int(args['ano']) if 'ano' in args else ''
@@ -101,13 +102,13 @@ def get_ocorrencias(df, uf='', tipo_crime='', ano='', mes='', est=''):
         condition &= df['Ano'] == ano
     if mes != '':
         condition &= df['Mês'].str.contains(mes.lower(), case=False)
-
+        
     return df.loc[condition]
     
 
 
 def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano='', est=''):
-    condition = df.index > -1
+    condition = True
     if municipio != '':
         condition &= dfVitimasMunicipios['Município'].str.contains(municipio, case=False)
     if uf != '':
@@ -118,9 +119,10 @@ def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano='', est='
         condition &= dfVitimasMunicipios['Mês/Ano'].astype(str).str.contains(MES[mes[:3].lower()])
     if ano != '':
         condition &= dfVitimasMunicipios['Mês/Ano'].astype(str).str.contains(ano)
-    
-    return dfVitimasMunicipios.loc[condition]
-    
+    try:
+        return dfVitimasMunicipios.loc[condition]
+    except KeyError:
+        return dfVitimasMunicipios
 
 # Exemplos de requisições GET para a API:
 # http://127.0.0.1:5000/
@@ -134,6 +136,7 @@ def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano='', est='
 app = Flask('Ocorrências Criminais')
 api = Api(app)
 api.add_resource(Ocorrencias, '/<base>')
+# api.add_resource(Vitimas, '/vitimas')
 api.add_resource(Municipios, '/vitimas_municipios')
 
 if __name__ == '__main__':
