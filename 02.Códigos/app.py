@@ -96,7 +96,7 @@ class Bases(Resource):
             return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
 
-class Questions(Resource):
+class Infos(Resource):
     def get(self, pergunta):
         try:
             data = '{"Erro": "Por Favor, verifique a sua requisição."}'
@@ -123,7 +123,7 @@ class Questions(Resource):
 # API
 app = Flask('Ocorrências Criminais')
 api = Api(app)
-api.add_resource(Questions, '/question/<pergunta>')  # Rota para requisições pré-cadastradas
+api.add_resource(Infos, '/info/<pergunta>')  # Rota para requisições pré-cadastradas
 api.add_resource(Bases, '/<base>')  # Rota para filtros para as três bases de dados
 
 if __name__ == '__main__':
