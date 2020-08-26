@@ -129,7 +129,8 @@ class Infos(Resource):
                     data = dfOcorrencias.groupby(['Tipo Crime','UF','Ano'])['Ocorrências'].mean().to_json(indent=4)
                 elif pergunta == 'menos_perigosos':
                     data = dfOcorrencias.sort_values(dfOcorrencias.columns[-1]).iloc[:5].to_json(orient='records', indent=4)
-
+                elif pergunta == 'menos_perigosos_grafico':
+                    data = dfOcorrencias.plot().to_json(orient='records', indent=4)
                 return loads(data)
             else:
                 return loads('{"Erro": "Autenticação falhou!"}')
