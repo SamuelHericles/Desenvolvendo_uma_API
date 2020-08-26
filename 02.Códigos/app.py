@@ -82,7 +82,7 @@ class Bases(Resource):
             key, cid, uf, regiao, crime, ano, mes, r, order, est = arguments(request.args)
             if key in API_KEYS:  # Autenticação
                 if base == 'vitimas':
-                    data = get_ocorrencias(dfVitimas, uf, crime, ano,regiao, mes)
+                    data = get_ocorrencias(dfVitimas, uf, crime, ano, regiao, mes)
                 elif base == 'ocorrencias':
                     data = get_ocorrencias(dfOcorrencias, uf, crime, ano,regiao, mes)
                 elif base == 'vitimas_municipios':
@@ -93,7 +93,10 @@ class Bases(Resource):
                 return loads('{"Erro": "Autenticação falhou!"}')
 
             if est != '':
-                data = data.agg([est])
+                if est != 'sum':
+                    data = data.agg([est])
+                else:
+                    data = data.groupby('UF').sum(level =0)
             if r != '':  # Foi requisitado o ranking
                 data = data.sort_values(data.columns[-1], ascending=(order == 'ASC')).iloc[:r]
             elif order != '':  # Foi requisitado ordenamento sem ranking
@@ -159,10 +162,11 @@ class Infos(Resource):
 # http://127.0.0.1:5000/vitimas?key=5fdeb7c5&ranking=100 (Certo)
 
 # order
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&order=ASC
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&order=DESC (Certo, fiz com ASC tbm)
 
 # estatisitca
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&est=mean
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&est=sum
+
 
 
 
