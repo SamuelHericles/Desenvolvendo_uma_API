@@ -110,11 +110,17 @@ class Infos(Resource):
                 if pergunta == 'media_ocorrencias_ano':
                     data = dfOcorrencias.groupby(['Ano']).mean().to_json(indent=4)
                 elif pergunta == 'soma_ocorrencias_ano':
-                    data = dfOcorrencias.groupby(['Ano'])['Ocorrências'].sum().to_json(indent=4)   
+                    data = dfOcorrencias.groupby(['Ano'])['Ocorrências'].sum().to_json(indent=4)
                 elif pergunta == 'soma_ocorrencias_estado':
                     data = dfOcorrencias.groupby(['UF'])['Ocorrências'].sum().to_json(indent=4)
                 elif pergunta == 'soma_ocorrencias_crime':
                     data = dfOcorrencias.groupby(['Tipo Crime'])['Ocorrências'].sum().to_json(indent=4)
+                elif pergunta == 'media_crime_anual':
+                    data = dfOcorrencias.groupby(['Ano','Tipo Crime'])['Ocorrências'].mean().to_json(indent=4)
+                elif pergunta == 'media_crime_estado':
+                    data = dfOcorrencias.groupby(['UF','Tipo Crime'])['Ocorrências'].mean().to_json(indent=4)
+                elif pergunta == 'media_crime_estado_anual':
+                    data = dfOcorrencias.groupby(['Tipo Crime','UF','Ano'])['Ocorrências'].mean().to_json(indent=4)
                 elif pergunta == 'menos_perigosos':
                     data = dfOcorrencias.sort_values(dfOcorrencias.columns[-1]).iloc[:5].to_json(orient='records', indent=4)
 
