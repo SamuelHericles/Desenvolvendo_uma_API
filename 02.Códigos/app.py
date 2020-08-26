@@ -1,7 +1,12 @@
 import pandas as pd
-from flask import Flask
+from flask import Flask,render_template
 from flask_restful import Resource, Api, request
 from json import loads
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+import io
+import random
 
 baseEstados = 'indicadoressegurancapublicaufmar20.xlsx'
 baseMunicipios = 'indicadoressegurancapublicamunicmar20.xlsx'
@@ -74,6 +79,10 @@ def arguments(args):  # Resgata todos os argumentos mapeados pela API
     order = args['order'] if 'order' in args else 'DESC'
     est = args['est'] if 'est' in args else ''
     return key, cid, uf, regiao, crime, ano, mes, r, order, est
+
+
+
+
 
 
 class Bases(Resource):
@@ -174,11 +183,33 @@ class Infos(Resource):
 # http://127.0.0.1:5000/info/menos_perigosos?key=397a32e6
 
 
+#### Teesta com info/Testativa com gráficos
+# http://127.0.0.1:5000/info/menos_perigosos_grafico?key=397a32e6
+
+
+
 # API
 app = Flask('Ocorrências Criminais')
 api = Api(app)
 api.add_resource(Infos, '/info/<pergunta>')  # Rota para requisições pré-cadastradas
 api.add_resource(Bases, '/<base>')  # Rota para filtros para as três bases de dados
+
+@app.route('/plot.png')
+def plot_png():
+    fig = create_figure()
+    output = io.BytesIO()
+    FigureCanvas(fig).print_png(output)
+    return Response(output.getvalue(), mimetype='image/png')
+
+def create_figure():
+    fig = Figure()
+    axis = fig.add_subplot(1, 1, 1)
+    xs = range(100)
+    ys = [random.randint(1, 50) for x in xs]
+    axis.plot(xs, ys)
+    return fig
+
+# http://127.0.0.1:5000/plot.png?key=397a32e6
 
 if __name__ == '__main__':
     app.run()
