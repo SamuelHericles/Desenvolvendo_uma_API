@@ -43,7 +43,9 @@
 * Para requisitar a soma das ocorrências em cada estado:
 > <IP Público de sua instância>/question/soma_ocorrencias_estado
 * Para requisitar a média de ocorrências por tipo de crime:
-> <IP Público de sua instância>/question/mean_ocorrencias_crime
+> <IP Público de sua instância>/question/media_ocorrencias_crime
+* Para requisitar os 5 estados menos perigosos:
+> <IP Público de sua instância>/question/menos_perigosos
 
 ## Em construção ...
 
