@@ -29,23 +29,23 @@
 ## Exemplos de requisições aceitas:
 
 * Para requisitar toda a base de Ocorrências:
-> <IP Público de sua instância>/ocorrencias
+> <IP Público de sua instância>/ocorrencias?key=<API_KEY>
 * Para obter os 10 maiores registros de vítimas:
-> <IP Público de sua instância>/vitimas?ranking=10
+> <IP Público de sua instância>/vitimas?key=<API_KEY>&ranking=10
 * Para requistar as vítimas fatais do ano de 2018:
-> <IP Público de sua instância>/vitimas?ano=2018
+> <IP Público de sua instância>/vitimas?key=<API_KEY>&ano=2018
 * Para obter as ocorrências de Estupro no mês de Janeiro em Tocantins:
-> <IP Público de sua instância>/ocorrencias?uf=TO&crime=Estupro&mes=janeiro
+> <IP Público de sua instância>/ocorrencias?key=<API_KEY>&uf=TO&crime=Estupro&mes=janeiro
 * Para requisitar as vítimas fatais em Cruz-CE em Janeiro de 2020:
-> <IP Público de sua instância>/vitimas_municipios?cid=Cruz&ano=2020&mes=jan&uf=ce
+> <IP Público de sua instância>/vitimas_municipios?key=<API_KEY>&cid=Cruz&ano=2020&mes=jan&uf=ce
 * Para requisitar a média de ocorrências a cada ano:
-> <IP Público de sua instância>/question/media_ocorrencias_ano
+> <IP Público de sua instância>/info/media_ocorrencias_ano?key=<API_KEY>
 * Para requisitar a soma das ocorrências em cada estado:
-> <IP Público de sua instância>/question/soma_ocorrencias_estado
-* Para requisitar a média de ocorrências por tipo de crime:
-> <IP Público de sua instância>/question/media_ocorrencias_crime
+> <IP Público de sua instância>/info/soma_ocorrencias_estado?key=<API_KEY>
+* Para requisitar a soma de ocorrências em cada tipo de crime:
+> <IP Público de sua instância>/info/soma_ocorrencias_crime?key=<API_KEY>
 * Para requisitar os 5 estados menos perigosos:
-> <IP Público de sua instância>/question/menos_perigosos
+> <IP Público de sua instância>/info/menos_perigosos?key=<API_KEY>
 
 ## Em construção ...
 
