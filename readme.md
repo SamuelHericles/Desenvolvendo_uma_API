@@ -38,6 +38,12 @@
 > <IP Público de sua instância>/ocorrencias?uf=TO&crime=Estupro&mes=janeiro
 * Para requisitar as vítimas fatais em Cruz-CE em Janeiro de 2020:
 > <IP Público de sua instância>/vitimas_municipios?cid=Cruz&ano=2020&mes=jan&uf=ce
+* Para requisitar a média de ocorrências a cada ano:
+> <IP Público de sua instância>/question/media_ocorrencias_ano
+* Para requisitar a soma das ocorrências em cada estado:
+> <IP Público de sua instância>/question/soma_ocorrencias_estado
+* Para requisitar a média de ocorrências por tipo de crime:
+> <IP Público de sua instância>/question/mean_ocorrencias_crime
 
 ## Em construção ...
 
