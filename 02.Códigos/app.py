@@ -27,44 +27,6 @@ dFrame = pd.ExcelFile(f'../01.Dados/{baseMunicipios}')
 dfVitimasMunicipios = pd.concat(pd.read_excel(dFrame, sheet_name=None))
 
 
-def arguments(args):  # Resgata todos os argumentos mapeados pela API
-    cid = args['cid'] if 'cid' in args else ''
-    uf = args['uf'] if 'uf' in args else ''
-    regiao = args['regiao'] if 'tipo' in args else ''
-    crime = args['crime'] if 'crime' in args else ''
-    ano = args['ano'] if 'ano' in args else ''
-    mes = args['mes'] if 'mes' in args else ''
-    r = int(args['ranking']) if 'ranking' in args else ''
-    order = args['order'] if 'order' in args else 'DESC'
-    est = args['est'] if 'est' in args else ''
-    return cid, uf, regiao, crime, ano, mes, r, order, est
-
-
-class Bases(Resource):
-    def get(self, base):
-        try:
-            cid, uf, regiao, crime, ano, mes, r, order, est = arguments(request.args)
-            if base == "vitimas":
-                data = get_ocorrencias(dfVitimas, uf, crime, ano, mes)
-            elif base == "ocorrencias":
-                data = get_ocorrencias(dfOcorrencias, uf, crime, ano, mes)
-            elif base == "vitimas_municipios":
-                data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
-            else:
-                return loads('{"Erro": "Por Favor, verifique a sua requisição."}')
-
-            if est != '':
-                data = data.agg([est])
-            if r != '':  # Foi requisitado o ranking
-                data = data.sort_values(data.columns[-1], ascending=(order == 'ASC')).iloc[:r]
-            elif order != '':  # Foi requisitado ordenamento sem ranking
-                data = data.sort_values(data.columns[-1], ascending=(order == 'ASC'))
-
-            return loads(data.to_json(orient="records", indent=4))
-        except Exception as e:
-            return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
-
-
 def get_ocorrencias(df, uf='', tipo_crime='', ano='', mes=''):  # Aplica os filtros nas bases de Ocorrencias e Vitimas
     condition = df.index > -1  # Condição que é sempre True
     if uf != '':
@@ -95,6 +57,59 @@ def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano=''):  # A
     return dfVitimasMunicipios.loc[condition]
 
 
+def arguments(args):  # Resgata todos os argumentos mapeados pela API
+    cid = args['cid'] if 'cid' in args else ''
+    uf = args['uf'] if 'uf' in args else ''
+    regiao = args['regiao'] if 'tipo' in args else ''
+    crime = args['crime'] if 'crime' in args else ''
+    ano = args['ano'] if 'ano' in args else ''
+    mes = args['mes'] if 'mes' in args else ''
+    r = int(args['ranking']) if 'ranking' in args else ''
+    order = args['order'] if 'order' in args else 'DESC'
+    est = args['est'] if 'est' in args else ''
+    return cid, uf, regiao, crime, ano, mes, r, order, est
+
+
+class Bases(Resource):
+    def get(self, base):
+        try:
+            cid, uf, regiao, crime, ano, mes, r, order, est = arguments(request.args)
+            if base == 'vitimas':
+                data = get_ocorrencias(dfVitimas, uf, crime, ano, mes)
+            elif base == 'ocorrencias':
+                data = get_ocorrencias(dfOcorrencias, uf, crime, ano, mes)
+            elif base == 'vitimas_municipios':
+                data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
+            else:
+                return loads('{"Erro": "Por Favor, verifique a sua requisição."}')
+
+            if est != '':
+                data = data.agg([est])
+            if r != '':  # Foi requisitado o ranking
+                data = data.sort_values(data.columns[-1], ascending=(order == 'ASC')).iloc[:r]
+            elif order != '':  # Foi requisitado ordenamento sem ranking
+                data = data.sort_values(data.columns[-1], ascending=(order == 'ASC'))
+
+            return loads(data.to_json(orient='records', indent=4))
+        except Exception as e:
+            return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
+
+
+class Questions(Resource):
+    def get(self, pergunta):
+        try:
+            if pergunta == 'media_ocorrencias_ano':
+                data = dfOcorrencias.groupby(['Ano']).mean()
+            elif pergunta == 'soma_ocorrencias_estado':
+                data = dfOcorrencias.groupby(['UF'])['Ocorrências'].sum()
+            elif pergunta == 'mean_ocorrencias_crime':
+                data = dfOcorrencias.groupby(['Tipo Crime'])['Ocorrências'].mean()
+
+            return loads(data.to_json(indent=4))
+        except Exception as e:
+            return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
+
+
 # Exemplos de requisições GET para a API:
 # http://127.0.0.1:5000/ocorrencias?ranking=10
 # http://127.0.0.1:5000/vitimas?ano=2018
@@ -104,7 +119,8 @@ def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano=''):  # A
 # API
 app = Flask('Ocorrências Criminais')
 api = Api(app)
-api.add_resource(Bases, '/<base>')
+api.add_resource(Questions, '/question/<pergunta>')  # Rota para requisições pré-cadastradas
+api.add_resource(Bases, '/<base>')  # Rota para filtros para as três bases de dados
 
 if __name__ == '__main__':
     app.run()
