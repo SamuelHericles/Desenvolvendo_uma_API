@@ -16,6 +16,7 @@ UFs = {'Acre': 'AC', 'Alagoas': 'AL', 'Amapá': 'AP', 'Amazonas': 'AM', 'Bahia':
        'Rio Grande do Sul': 'RS',
        'Rondônia': 'RO', 'Roraima': 'RR', 'Santa Catarina': 'SC', 'São Paulo': 'SP', 'Sergipe': 'SE', 'Tocantins': 'TO'}
 
+
 # Carrega bases dos estados
 dFrame = pd.ExcelFile(f'../01.Dados/{baseEstados}')
 dfOcorrencias = pd.read_excel(dFrame, 'Ocorrências')
@@ -131,11 +132,37 @@ class Infos(Resource):
             return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
 
-# Exemplos de requisições GET para a API:
-# http://127.0.0.1:5000/vitimas?key=397a32e6&ano=2018
+### Exemplos de requisições GET para a API:
+# key, cid, uf, regiao, crime, ano, mes, r, order, est
+
+## Teste com Bases
+# vitimas
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&ano=2018 (check)
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&cid=CE   (estranho cid e coloquei sigla de um estado)
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE    (check)
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&regiao=2018
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&crime=2018
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&mes=2018
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&r=10
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&order=ASC
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&est=mean
+
+
+
+# ocorrencias
 # http://127.0.0.1:5000/ocorrencias?key=397a32e6&uf=TO&crime=Estupro&mes=janeiro
+
+# vitimas_municipios
 # http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Cruz&ano=2020&mes=jan&uf=ce
+
+## Teste com info/
+# http://127.0.0.1:5000/info/media_ocorrencias_ano?key=397a32e6
+# http://127.0.0.1:5000/info/soma_ocorrencias_ano?key=397a32e6
+# http://127.0.0.1:5000/info/soma_ocorrencias_crime?key=397a32e6
+# http://127.0.0.1:5000/info/media_crime_anual?key=397a32e6
+# http://127.0.0.1:5000/info/media_crime_estado_anual?key=397a32e6
 # http://127.0.0.1:5000/info/menos_perigosos?key=397a32e6
+
 
 # API
 app = Flask('Ocorrências Criminais')
