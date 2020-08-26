@@ -30,12 +30,14 @@ dFrame = pd.ExcelFile(f'../01.Dados/{baseMunicipios}')
 dfVitimasMunicipios = pd.concat(pd.read_excel(dFrame, sheet_name=None))
 
 
-def get_ocorrencias(df, uf='', tipo_crime='', ano='', mes=''):  # Aplica os filtros nas bases de Ocorrencias e Vitimas
+def get_ocorrencias(df, uf='', tipo_crime='', ano='',regiao='', mes=''):  # Aplica os filtros nas bases de Ocorrencias e Vitimas
     condition = df.index > -1  # Condição que é sempre True
     if uf != '':
         condition &= df['UF'] == uf.upper()
     if tipo_crime != '':
         condition &= df['Tipo Crime'].str.contains(tipo_crime, case=False)
+    if regiao != '':
+        condition &= df['Região'].str.contains(regiao, case=False)
     if ano != '':
         condition &= df['Ano'] == int(ano)
     if mes != '':
@@ -64,7 +66,7 @@ def arguments(args):  # Resgata todos os argumentos mapeados pela API
     key = args['key'].lower() if 'key' in args else ''
     cid = args['cid'] if 'cid' in args else ''
     uf = args['uf'] if 'uf' in args else ''
-    regiao = args['regiao'] if 'tipo' in args else ''
+    regiao = args['regiao'] if 'regiao' in args else '' ## mudei aqui tava if 'tipo' in args else ''
     crime = args['crime'] if 'crime' in args else ''
     ano = args['ano'] if 'ano' in args else ''
     mes = args['mes'] if 'mes' in args else ''
@@ -80,9 +82,9 @@ class Bases(Resource):
             key, cid, uf, regiao, crime, ano, mes, r, order, est = arguments(request.args)
             if key in API_KEYS:  # Autenticação
                 if base == 'vitimas':
-                    data = get_ocorrencias(dfVitimas, uf, crime, ano, mes)
+                    data = get_ocorrencias(dfVitimas, uf, crime, ano,regiao, mes)
                 elif base == 'ocorrencias':
-                    data = get_ocorrencias(dfOcorrencias, uf, crime, ano, mes)
+                    data = get_ocorrencias(dfOcorrencias, uf, crime, ano,regiao, mes)
                 elif base == 'vitimas_municipios':
                     data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
                 else:
@@ -137,14 +139,29 @@ class Infos(Resource):
 
 ## Teste com Bases
 # vitimas
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&ano=2018 (check)
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&cid=CE   (estranho cid e coloquei sigla de um estado)
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE    (check)
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&regiao=2018
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&crime=2018
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&mes=2018
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&r=10
+
+# Cidade
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&cid=Marco   (Problema)
+
+# UFs
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE    (Certo)
+
+# Região
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&regiao=ce (Certo)
+
+# Tipo de crime
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&crime=Le (Certo)
+
+# ano
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&mes=jan (Certo)
+
+# ranking
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&ranking=100 (Certo)
+
+# order
 # http://127.0.0.1:5000/vitimas?key=5fdeb7c5&order=ASC
+
+# estatisitca
 # http://127.0.0.1:5000/vitimas?key=5fdeb7c5&est=mean
 
 
