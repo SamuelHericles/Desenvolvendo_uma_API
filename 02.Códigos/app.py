@@ -109,6 +109,8 @@ class Infos(Resource):
                 data = '{"Erro": "Por Favor, verifique a sua requisição."}'
                 if pergunta == 'media_ocorrencias_ano':
                     data = dfOcorrencias.groupby(['Ano']).mean().to_json(indent=4)
+                elif pergunta == 'soma_ocorrencias_ano':
+                    data = dfOcorrencias.groupby(['Ano'])['Ocorrências'].sum().to_json(indent=4)   
                 elif pergunta == 'soma_ocorrencias_estado':
                     data = dfOcorrencias.groupby(['UF'])['Ocorrências'].sum().to_json(indent=4)
                 elif pergunta == 'soma_ocorrencias_crime':
