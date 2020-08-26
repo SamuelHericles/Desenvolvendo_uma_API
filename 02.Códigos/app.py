@@ -104,7 +104,7 @@ class Questions(Resource):
                 data = dfOcorrencias.groupby(['Ano']).mean().to_json(indent=4)
             elif pergunta == 'soma_ocorrencias_estado':
                 data = dfOcorrencias.groupby(['UF'])['Ocorrências'].sum().to_json(indent=4)
-            elif pergunta == 'mean_ocorrencias_crime':
+            elif pergunta == 'media_ocorrencias_crime':
                 data = dfOcorrencias.groupby(['Tipo Crime'])['Ocorrências'].mean().to_json(indent=4)
             elif pergunta == 'menos_perigosos':
                 data = dfOcorrencias.sort_values(dfOcorrencias.columns[-1]).iloc[:5].to_json(orient='records', indent=4)
