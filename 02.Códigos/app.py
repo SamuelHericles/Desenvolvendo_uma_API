@@ -11,7 +11,8 @@ MES = {'jan': '-01-', 'fev': '-02-', 'mar': '-03-', 'abr': '-04-', 'mai': '-05-'
 UFs = {'Acre': 'AC', 'Alagoas': 'AL', 'Amapá': 'AP', 'Amazonas': 'AM', 'Bahia': 'BA', 'Ceará': 'CE',
        'Distrito Federal': 'DF', 'Espírito Santo': 'ES', 'Goiás': 'GO', 'Maranhão': 'MA', 'Mato Grosso': 'MT',
        'Mato Grosso do Sul': 'MS', 'Minas Gerais': 'MG', 'Pará': 'PA', 'Paraíba': 'PB', 'Paraná': 'PR',
-       'Pernambuco': 'PE', 'Piauí': 'PI', 'Rio de Janeiro': 'RJ', 'Rio Grande do Norte': 'RN', 'Rio Grande do Sul': 'RS',
+       'Pernambuco': 'PE', 'Piauí': 'PI', 'Rio de Janeiro': 'RJ', 'Rio Grande do Norte': 'RN',
+       'Rio Grande do Sul': 'RS',
        'Rondônia': 'RO', 'Roraima': 'RR', 'Santa Catarina': 'SC', 'São Paulo': 'SP', 'Sergipe': 'SE', 'Tocantins': 'TO'}
 
 # Carrega bases dos estados
@@ -37,9 +38,9 @@ def get_ocorrencias(df, uf='', tipo_crime='', ano='', mes=''):  # Aplica os filt
         condition &= df['Ano'] == int(ano)
     if mes != '':
         condition &= df['Mês'].str.contains(mes.lower(), case=False)
-        
+
     return df.loc[condition]
-    
+
 
 def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano=''):  # Aplica filtro na base de municípios
     condition = dfVitimasMunicipios['Município'].str.len() > 0  # Condição que é sempre True
@@ -98,14 +99,16 @@ class Bases(Resource):
 class Questions(Resource):
     def get(self, pergunta):
         try:
+            data = '{"Erro": "Por Favor, verifique a sua requisição."}'
             if pergunta == 'media_ocorrencias_ano':
-                data = dfOcorrencias.groupby(['Ano']).mean()
+                data = dfOcorrencias.groupby(['Ano']).mean().to_json(indent=4)
             elif pergunta == 'soma_ocorrencias_estado':
-                data = dfOcorrencias.groupby(['UF'])['Ocorrências'].sum()
+                data = dfOcorrencias.groupby(['UF'])['Ocorrências'].sum().to_json(indent=4)
             elif pergunta == 'mean_ocorrencias_crime':
-                data = dfOcorrencias.groupby(['Tipo Crime'])['Ocorrências'].mean()
-
-            return loads(data.to_json(indent=4))
+                data = dfOcorrencias.groupby(['Tipo Crime'])['Ocorrências'].mean().to_json(indent=4)
+            elif pergunta == 'menos_perigosos':
+                data = dfOcorrencias.sort_values(dfOcorrencias.columns[-1]).iloc[:5].to_json(orient='records', indent=4)
+            return loads(data)
         except Exception as e:
             return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
@@ -115,6 +118,7 @@ class Questions(Resource):
 # http://127.0.0.1:5000/vitimas?ano=2018
 # http://127.0.0.1:5000/ocorrencias?uf=TO&crime=Estupro&mes=janeiro
 # http://127.0.0.1:5000/vitimas_municipios?cid=Cruz&ano=2020&mes=jan&uf=ce
+# http://127.0.0.1:5000/question/menos_perigosos
 
 # API
 app = Flask('Ocorrências Criminais')
