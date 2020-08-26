@@ -1,0 +1,101 @@
+### Exemplos de requisições GET para a API:
+# key, cid, uf, regiao, crime, ano, mes, r, order, est
+
+#### Teste com Bases
+# vitimas
+
+# UFs
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE    (Certo)
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018    (Certo)
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le (Certo)
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan (Certo)
+
+# Região
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&regiao=ce (Certo)
+
+# Tipo de crime
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&crime=Le (Certo)
+
+# ano
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&mes=jan (Certo)
+
+# ranking
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&ranking=100 (Certo)
+
+# order
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&order=DESC (Certo, fiz com ASC tbm)
+
+# estatisitca
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&est=sum (A decidir)
+
+##### ocorrencias
+
+# UFs
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE    (Certo)
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018    (Certo)
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le (Certo)
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan (Certo)
+
+# Região
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&regiao=sul (Certo)
+
+# Tipo de crime
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&crime=Le (Certo)
+
+# ano
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&mes=jan (Certo)
+
+# ranking
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&ranking=10 (Certo)
+
+# order
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&order=DESC (Certo, fiz com ASC tbm)
+
+# estatisitca
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&est=var (A decidir)
+
+
+# http://127.0.0.1:5000/ocorrencias?key=397a32e6&uf=TO&crime=Estupro&mes=janeiro (Certo)
+
+##### vitimas_municipios
+
+# Cidade
+# http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco (Certo)
+# http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020 (Certo)
+# http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan (Certo)
+# http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan&uf=ce (Certo)
+
+# UFs
+# http://127.0.0.1:5000/vitimas_municipios?key=5fdeb7c5&uf=CE    (Certo)
+# http://127.0.0.1:5000/vitimas_municipios?key=5fdeb7c5&uf=CE&ano=2018    (Certo)
+# http://127.0.0.1:5000/vitimas_municipios?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan (Certo)
+
+# Região
+# http://127.0.0.1:5000/vitimas_municipios?key=5fdeb7c5&regiao=sul (Certo)
+
+# Tipo de crime
+
+# ano
+# http://127.0.0.1:5000/vitimas_municipios?key=5fdeb7c5&mes=jan (Certo)
+
+# ranking
+# http://127.0.0.1:5000/vitimas_municipios?key=5fdeb7c5&ranking=10 (Certo)
+
+# order
+# http://127.0.0.1:5000/vitimas_municipios?key=5fdeb7c5&order=DESC (Certo)
+# http://127.0.0.1:5000/vitimas_municipios?key=5fdeb7c5&order=ASC (Certo)
+
+# estatisitca
+# http://127.0.0.1:5000/vitimas_municipios?key=5fdeb7c5&est=sum (A decidir)
+
+
+# http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&uf=TO&crime=Estupro&mes=janeiro (Certo)
+
+
+##### Teste com info/
+# http://127.0.0.1:5000/info/media_ocorrencias_ano?key=397a32e6 (Certo)
+# http://127.0.0.1:5000/info/soma_ocorrencias_ano?key=397a32e6 (Certo)
+# http://127.0.0.1:5000/info/soma_ocorrencias_crime?key=397a32e6 (Certo)
+# http://127.0.0.1:5000/info/media_crime_anual?key=397a32e6  (Certo)
+# http://127.0.0.1:5000/info/media_crime_estado_anual?key=397a32e6 (Certo)
+# http://127.0.0.1:5000/info/menos_perigosos?key=397a32e6 (Certo)

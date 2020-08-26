@@ -96,7 +96,7 @@ class Bases(Resource):
                 if est != 'sum':
                     data = data.agg([est])
                 else:
-                    data = data.groupby('UF').sum(level =0)
+                    data = data.sum(level =0)
             if r != '':  # Foi requisitado o ranking
                 data = data.sort_values(data.columns[-1], ascending=(order == 'ASC')).iloc[:r]
             elif order != '':  # Foi requisitado ordenamento sem ranking
@@ -140,43 +140,31 @@ class Infos(Resource):
 ### Exemplos de requisições GET para a API:
 # key, cid, uf, regiao, crime, ano, mes, r, order, est
 
-## Teste com Bases
+#### Teste com Bases
 # vitimas
 
-# Cidade
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&cid=Marco   (Problema)
-
 # UFs
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE    (Certo)
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE    
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018    
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le 
+# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan 
 
-# Região
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&regiao=ce (Certo)
-
-# Tipo de crime
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&crime=Le (Certo)
-
-# ano
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&mes=jan (Certo)
-
-# ranking
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&ranking=100 (Certo)
-
-# order
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&order=DESC (Certo, fiz com ASC tbm)
-
-# estatisitca
-# http://127.0.0.1:5000/vitimas?key=5fdeb7c5&est=sum
+##### ocorrencias
+# UFs
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE    
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018   
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le 
+# http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan 
 
 
+##### vitimas_municipios
+# Cidade
+# http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco
+# http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020 
+# http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan 
+# http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan&uf=ce 
 
-
-# ocorrencias
-# http://127.0.0.1:5000/ocorrencias?key=397a32e6&uf=TO&crime=Estupro&mes=janeiro
-
-# vitimas_municipios
-# http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Cruz&ano=2020&mes=jan&uf=ce
-
-## Teste com info/
+##### Teste com info/
 # http://127.0.0.1:5000/info/media_ocorrencias_ano?key=397a32e6
 # http://127.0.0.1:5000/info/soma_ocorrencias_ano?key=397a32e6
 # http://127.0.0.1:5000/info/soma_ocorrencias_crime?key=397a32e6
