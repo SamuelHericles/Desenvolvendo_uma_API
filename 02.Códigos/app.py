@@ -6,6 +6,7 @@ from json import loads
 baseEstados = 'indicadoressegurancapublicaufmar20.xlsx'
 baseMunicipios = 'indicadoressegurancapublicamunicmar20.xlsx'
 
+API_KEYS = ['397a32e6', '5fdeb7c5', 'bcd214a2', '97bf6249', 'ed64b06b']  # CRC-32: lucas, samuel, pedro, joao, ialis
 MES = {'jan': '-01-', 'fev': '-02-', 'mar': '-03-', 'abr': '-04-', 'mai': '-05-', 'jun': '-06-',
        'jul': '-07-', 'ago': '-08-', 'set': '-09-', 'out': '-10-', 'nov': '-11-', 'dez': '-12-'}
 UFs = {'Acre': 'AC', 'Alagoas': 'AL', 'Amapá': 'AP', 'Amazonas': 'AM', 'Bahia': 'BA', 'Ceará': 'CE',
@@ -59,6 +60,7 @@ def get_vitimas_municipios(municipio='', uf='', regiao='', mes='', ano=''):  # A
 
 
 def arguments(args):  # Resgata todos os argumentos mapeados pela API
+    key = args['key'].lower() if 'key' in args else ''
     cid = args['cid'] if 'cid' in args else ''
     uf = args['uf'] if 'uf' in args else ''
     regiao = args['regiao'] if 'tipo' in args else ''
@@ -68,21 +70,24 @@ def arguments(args):  # Resgata todos os argumentos mapeados pela API
     r = int(args['ranking']) if 'ranking' in args else ''
     order = args['order'] if 'order' in args else 'DESC'
     est = args['est'] if 'est' in args else ''
-    return cid, uf, regiao, crime, ano, mes, r, order, est
+    return key, cid, uf, regiao, crime, ano, mes, r, order, est
 
 
 class Bases(Resource):
     def get(self, base):
         try:
-            cid, uf, regiao, crime, ano, mes, r, order, est = arguments(request.args)
-            if base == 'vitimas':
-                data = get_ocorrencias(dfVitimas, uf, crime, ano, mes)
-            elif base == 'ocorrencias':
-                data = get_ocorrencias(dfOcorrencias, uf, crime, ano, mes)
-            elif base == 'vitimas_municipios':
-                data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
+            key, cid, uf, regiao, crime, ano, mes, r, order, est = arguments(request.args)
+            if key in API_KEYS:  # Autenticação
+                if base == 'vitimas':
+                    data = get_ocorrencias(dfVitimas, uf, crime, ano, mes)
+                elif base == 'ocorrencias':
+                    data = get_ocorrencias(dfOcorrencias, uf, crime, ano, mes)
+                elif base == 'vitimas_municipios':
+                    data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
+                else:
+                    return loads('{"Erro": "Por Favor, verifique a sua requisição."}')
             else:
-                return loads('{"Erro": "Por Favor, verifique a sua requisição."}')
+                return loads('{"Erro": "Autenticação falhou!"}')
 
             if est != '':
                 data = data.agg([est])
@@ -99,26 +104,30 @@ class Bases(Resource):
 class Infos(Resource):
     def get(self, pergunta):
         try:
-            data = '{"Erro": "Por Favor, verifique a sua requisição."}'
-            if pergunta == 'media_ocorrencias_ano':
-                data = dfOcorrencias.groupby(['Ano']).mean().to_json(indent=4)
-            elif pergunta == 'soma_ocorrencias_estado':
-                data = dfOcorrencias.groupby(['UF'])['Ocorrências'].sum().to_json(indent=4)
-            elif pergunta == 'media_ocorrencias_crime':
-                data = dfOcorrencias.groupby(['Tipo Crime'])['Ocorrências'].mean().to_json(indent=4)
-            elif pergunta == 'menos_perigosos':
-                data = dfOcorrencias.sort_values(dfOcorrencias.columns[-1]).iloc[:5].to_json(orient='records', indent=4)
-            return loads(data)
+            key = request.args['key'].lower() if 'key' in request.args else ''
+            if key in API_KEYS:  # Autenticação
+                data = '{"Erro": "Por Favor, verifique a sua requisição."}'
+                if pergunta == 'media_ocorrencias_ano':
+                    data = dfOcorrencias.groupby(['Ano']).mean().to_json(indent=4)
+                elif pergunta == 'soma_ocorrencias_estado':
+                    data = dfOcorrencias.groupby(['UF'])['Ocorrências'].sum().to_json(indent=4)
+                elif pergunta == 'soma_ocorrencias_crime':
+                    data = dfOcorrencias.groupby(['Tipo Crime'])['Ocorrências'].sum().to_json(indent=4)
+                elif pergunta == 'menos_perigosos':
+                    data = dfOcorrencias.sort_values(dfOcorrencias.columns[-1]).iloc[:5].to_json(orient='records', indent=4)
+
+                return loads(data)
+            else:
+                return loads('{"Erro": "Autenticação falhou!"}')
         except Exception as e:
             return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
 
 # Exemplos de requisições GET para a API:
-# http://127.0.0.1:5000/ocorrencias?ranking=10
-# http://127.0.0.1:5000/vitimas?ano=2018
-# http://127.0.0.1:5000/ocorrencias?uf=TO&crime=Estupro&mes=janeiro
-# http://127.0.0.1:5000/vitimas_municipios?cid=Cruz&ano=2020&mes=jan&uf=ce
-# http://127.0.0.1:5000/question/menos_perigosos
+# http://127.0.0.1:5000/vitimas?key=397a32e6&ano=2018
+# http://127.0.0.1:5000/ocorrencias?key=397a32e6&uf=TO&crime=Estupro&mes=janeiro
+# http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Cruz&ano=2020&mes=jan&uf=ce
+# http://127.0.0.1:5000/info/menos_perigosos?key=397a32e6
 
 # API
 app = Flask('Ocorrências Criminais')
