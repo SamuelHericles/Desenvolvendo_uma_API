@@ -168,8 +168,6 @@ api.add_resource(Infos, '/info/<pergunta>')  # Rota para requisições pré-cada
 api.add_resource(Bases, '/<base>')  # Rota para filtros para as três bases de dados
 
 
-# http://127.0.0.1:5000/plot/mapa_soma_ocorrencias?key=397a32e6
-# http://127.0.0.1:5000/plot/barras_media_ocorrencias?key=397a32e6
 @app.route('/plot/<plot>')
 def get_graficos(plot):
     try:
@@ -220,6 +218,11 @@ def get_graficos(plot):
             return loads('{"Erro": "Autenticação falhou!"}')
     except Exception as e:
         return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
+
+
+@app.route('/')
+def help():
+    return render_template('help.html')
 
 
 if __name__ == '__main__':
