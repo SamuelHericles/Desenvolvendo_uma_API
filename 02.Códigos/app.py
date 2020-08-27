@@ -1,8 +1,8 @@
 import pandas as pd
-import plotly as px
+import plotly.express as px
 from flask import Flask, render_template
 from flask_restful import Resource, Api, request
-from json import loads
+from json import load, loads
 
 baseEstados = 'indicadoressegurancapublicaufmar20.xlsx'
 baseMunicipios = 'indicadoressegurancapublicamunicmar20.xlsx'
@@ -131,7 +131,7 @@ class Infos(Resource):
 
                 base = data.columns[-1]
 
-                if ('anual' or 'mensal') in pergunta and 'municipios' in pergunta:
+                if 'anual' in pergunta or 'mensal' in pergunta and 'municipios' in pergunta:
                     group.append('Mês/Ano')
                 elif 'anual' in pergunta:
                     group.append('Ano')
@@ -143,7 +143,7 @@ class Infos(Resource):
                 if 'estado' in pergunta:
                     if 'municipios' in pergunta:
                         group.append('Sigla UF')
-                    elif ('ocorrencias' or 'vitimas') in pergunta:
+                    elif 'ocorrencias' in pergunta or 'vitimas' in pergunta:
                         group.append('UF')
 
                 if len(group) > 0:
@@ -168,14 +168,58 @@ api.add_resource(Infos, '/info/<pergunta>')  # Rota para requisições pré-cada
 api.add_resource(Bases, '/<base>')  # Rota para filtros para as três bases de dados
 
 
-@app.route('/media_crime_estado_anual_grafico')
-def get_graficos():
-    key = request.args['key'].lower() if 'key' in request.args else ''
-    if key in API_KEYS: #Autenticação
-            fig = px.bar(dfVitimas,x="Região",y="Vítimas",color='UF')
-            fig.write_html('./templates/index.html')
+# http://127.0.0.1:5000/plot/mapa_soma_ocorrencias?key=397a32e6
+# http://127.0.0.1:5000/plot/barras_media_ocorrencias?key=397a32e6
+@app.route('/plot/<plot>')
+def get_graficos(plot):
+    try:
+        key = request.args['key'].lower() if 'key' in request.args else ''
+        if key in API_KEYS:  # Autenticação
+            if 'mapa' in plot:
+                if 'ocorrencias' in plot:
+                    df = dfOcorrencias
+                elif 'vitimas' in plot:
+                    df = dfVitimas
 
+                base = df.columns[-1]
+                df = df.groupby(['UF', 'Ano'], as_index=False)
+
+                if 'soma' in plot:
+                    op = 'Soma'
+                    df = df.sum()
+                elif 'media' in plot:
+                    op = 'Média'
+                    df = df.mean()
+
+                estados = load(open('../01.Dados/JSON/Brasil.json'))
+
+                fig = px.choropleth_mapbox(df, geojson=estados, color=base, locations='UF', featureidkey='properties.UF',
+                                           animation_frame='Ano', title=f'{op} de {base} no Brasil a cada ano',
+                                           mapbox_style='white-bg', center={'lat': -14, 'lon': -52}, zoom=2.8)
+            elif 'barras' in plot:
+                if 'ocorrencias' in plot:
+                    df = dfOcorrencias
+                elif 'vitimas' in plot:
+                    df = dfVitimas
+
+                base = df.columns[-1]
+                df = df.groupby(['UF', 'Tipo Crime', 'Ano'], as_index=False)
+
+                if 'soma' in plot:
+                    op = 'Soma'
+                    df = df.sum()
+                elif 'media' in plot:
+                    op = 'Média'
+                    df = df.mean()
+
+                fig = px.bar(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
+                             title=f'{op} de {base} no Brasil a cada ano')
+            fig.write_html('./templates/index.html')
             return render_template('index.html')
+        else:
+            return loads('{"Erro": "Autenticação falhou!"}')
+    except Exception as e:
+        return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
 
 if __name__ == '__main__':
