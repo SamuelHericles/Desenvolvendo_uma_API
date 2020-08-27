@@ -2,9 +2,9 @@
 
 sudo apt-get update
 # Instala o Python, Pip, Nginx e Gunicorn
-sudo apt-get --assume-yes install python3 python3-pip nginx gunicorn3
+sudo apt-get --assume-yes install python3 python3-pip nginx gunicorn3 
 # Instala dependêcias da API
-sudo pip3 install flask flask_restful pandas xlrd
+sudo pip3 install flask flask_restful pandas xlrd plotly
 
 # Baixa o código-fonte da API e arquivo de config do Nginx
 wget https://raw.githubusercontent.com/SamuelHericles/Desenvolvendo_uma_API/master/02.C%C3%B3digos/app.py
