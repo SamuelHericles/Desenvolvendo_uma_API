@@ -3,6 +3,7 @@ import plotly.express as px
 from flask import Flask, render_template
 from flask_restful import Resource, Api, request
 from json import load, loads
+from os import remove
 
 baseEstados = 'indicadoressegurancapublicaufmar20.xlsx'
 baseMunicipios = 'indicadoressegurancapublicamunicmar20.xlsx'
@@ -212,8 +213,11 @@ def get_graficos(plot):
 
                 fig = px.bar(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
                              title=f'{op} de {base} no Brasil a cada ano')
-            fig.write_html('./templates/index.html')
-            return render_template('index.html')
+
+            fig.write_html(f'./templates/{op}_{base}.html')
+            rendered = render_template(f'{op}_{base}.html')
+            remove(f'./templates/{op}_{base}.html')
+            return rendered
         else:
             return loads('{"Erro": "Autenticação falhou!"}')
     except Exception as e:
