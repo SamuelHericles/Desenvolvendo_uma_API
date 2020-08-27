@@ -1,5 +1,9 @@
 import pandas as pd
-from flask import Flask,render_template
+import plotly
+import numpy as np
+import json
+import plotly.graph_objs as go
+from flask import Response,Flask,render_template
 from flask_restful import Resource, Api, request
 from json import loads
 import matplotlib.pyplot as plt
@@ -7,7 +11,9 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import io
 import random
-
+import plotly.express as px
+app = Flask('Ocorrências Criminais')
+api = Api(app)
 baseEstados = 'indicadoressegurancapublicaufmar20.xlsx'
 baseMunicipios = 'indicadoressegurancapublicamunicmar20.xlsx'
 
@@ -82,9 +88,6 @@ def arguments(args):  # Resgata todos os argumentos mapeados pela API
 
 
 
-
-
-
 class Bases(Resource):
     def get(self, base):
         try:
@@ -138,8 +141,7 @@ class Infos(Resource):
                     data = dfOcorrencias.groupby(['Tipo Crime','UF','Ano'])['Ocorrências'].mean().to_json(indent=4)
                 elif pergunta == 'menos_perigosos':
                     data = dfOcorrencias.sort_values(dfOcorrencias.columns[-1]).iloc[:5].to_json(orient='records', indent=4)
-                elif pergunta == 'menos_perigosos_grafico':
-                    data = dfOcorrencias.plot().to_json(orient='records', indent=4)
+
                 return loads(data)
             else:
                 return loads('{"Erro": "Autenticação falhou!"}')
@@ -147,8 +149,16 @@ class Infos(Resource):
             return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
 
+@app.route('/media_crime_estado_anual_grafico')
+def get_graficos():
+    key = request.args['key'].lower() if 'key' in request.args else ''
+    if key in API_KEYS: #Autenticação
+            fig = px.bar(dfVitimas,x="Região",y="Vítimas",color='UF')
+            fig.write_html('./templates/index.html')
+
+            return render_template('index.html')
+
 ### Exemplos de requisições GET para a API:
-# key, cid, uf, regiao, crime, ano, mes, r, order, est
 
 #### Teste com Bases
 # vitimas
@@ -183,33 +193,14 @@ class Infos(Resource):
 # http://127.0.0.1:5000/info/menos_perigosos?key=397a32e6
 
 
-#### Teesta com info/Testativa com gráficos
-# http://127.0.0.1:5000/info/menos_perigosos_grafico?key=397a32e6
-
-
+#### Teesta com plot/Testativa com gráficos
+# http://127.0.0.1:5000/media_crime_estado_anual_grafico?key=397a32e6
 
 # API
-app = Flask('Ocorrências Criminais')
-api = Api(app)
+
 api.add_resource(Infos, '/info/<pergunta>')  # Rota para requisições pré-cadastradas
 api.add_resource(Bases, '/<base>')  # Rota para filtros para as três bases de dados
 
-@app.route('/plot.png')
-def plot_png():
-    fig = create_figure()
-    output = io.BytesIO()
-    FigureCanvas(fig).print_png(output)
-    return Response(output.getvalue(), mimetype='image/png')
-
-def create_figure():
-    fig = Figure()
-    axis = fig.add_subplot(1, 1, 1)
-    xs = range(100)
-    ys = [random.randint(1, 50) for x in xs]
-    axis.plot(xs, ys)
-    return fig
-
-# http://127.0.0.1:5000/plot.png?key=397a32e6
 
 if __name__ == '__main__':
     app.run()
