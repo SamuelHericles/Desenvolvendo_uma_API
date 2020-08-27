@@ -6,14 +6,12 @@ import plotly.graph_objs as go
 from flask import Response,Flask,render_template
 from flask_restful import Resource, Api, request
 from json import loads
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
-import io
-import random
-import plotly.express as px
-app = Flask('Ocorrências Criminais')
-api = Api(app)
+# import matplotlib.pyplot as plt
+# from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+# from matplotlib.figure import Figure
+# import io
+# import random
+
 baseEstados = 'indicadoressegurancapublicaufmar20.xlsx'
 baseMunicipios = 'indicadoressegurancapublicamunicmar20.xlsx'
 
@@ -41,7 +39,7 @@ dFrame = pd.ExcelFile(f'../01.Dados/{baseMunicipios}')
 dfVitimasMunicipios = pd.concat(pd.read_excel(dFrame, sheet_name=None))
 
 
-def get_ocorrencias(df, uf='', tipo_crime='', ano='',regiao='', mes=''):  # Aplica os filtros nas bases de Ocorrencias e Vitimas
+def get_ocorrencias(df, uf='', tipo_crime='', ano='', regiao='', mes=''):  # Aplica os filtros em Ocorrencias ou Vitimas
     condition = df.index > -1  # Condição que é sempre True
     if uf != '':
         condition &= df['UF'] == uf.upper()
@@ -77,7 +75,7 @@ def arguments(args):  # Resgata todos os argumentos mapeados pela API
     key = args['key'].lower() if 'key' in args else ''
     cid = args['cid'] if 'cid' in args else ''
     uf = args['uf'] if 'uf' in args else ''
-    regiao = args['regiao'] if 'regiao' in args else '' ## mudei aqui tava if 'tipo' in args else ''
+    regiao = args['regiao'] if 'regiao' in args else ''
     crime = args['crime'] if 'crime' in args else ''
     ano = args['ano'] if 'ano' in args else ''
     mes = args['mes'] if 'mes' in args else ''
@@ -86,6 +84,17 @@ def arguments(args):  # Resgata todos os argumentos mapeados pela API
     est = args['est'] if 'est' in args else ''
     return key, cid, uf, regiao, crime, ano, mes, r, order, est
 
+
+def addCabecalho(data, base='', orient='columns'):
+    if base != '':  # Diferenciar Infos de Bases
+        colunm = data
+    else:
+        base = data.columns[-1]
+        colunm = data[base]
+    tam = len(data.index)
+    soma = colunm.sum()
+    media = colunm.mean()
+    return f'{{"Info": "{base}", "Quantidade": {tam}, "Soma": {soma}, "Média": {media}, "Dados": {data.to_json(orient=orient)}}}'
 
 
 class Bases(Resource):
@@ -96,7 +105,7 @@ class Bases(Resource):
                 if base == 'vitimas':
                     data = get_ocorrencias(dfVitimas, uf, crime, ano, regiao, mes)
                 elif base == 'ocorrencias':
-                    data = get_ocorrencias(dfOcorrencias, uf, crime, ano,regiao, mes)
+                    data = get_ocorrencias(dfOcorrencias, uf, crime, ano, regiao, mes)
                 elif base == 'vitimas_municipios':
                     data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
                 else:
@@ -104,17 +113,17 @@ class Bases(Resource):
             else:
                 return loads('{"Erro": "Autenticação falhou!"}')
 
-            if est != '':
-                if est != 'sum':
-                    data = data.agg([est])
-                else:
-                    data = data.sum(level =0)
+            # if est != '':
+            #     if est != 'sum':
+            #         data = data.agg([est])
+            #     else:
+            #         data = data.sum(level =0)
             if r != '':  # Foi requisitado o ranking
                 data = data.sort_values(data.columns[-1], ascending=(order == 'ASC')).iloc[:r]
             elif order != '':  # Foi requisitado ordenamento sem ranking
                 data = data.sort_values(data.columns[-1], ascending=(order == 'ASC'))
 
-            return loads(data.to_json(orient='records', indent=4))
+            return loads(addCabecalho(data, orient='records'))
         except Exception as e:
             return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
@@ -169,28 +178,27 @@ def get_graficos():
 # http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le 
 # http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan 
 
-##### ocorrencias
-# UFs
+## ocorrencias
+### UFs
 # http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE    
 # http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018   
 # http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le 
 # http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan 
 
 
-##### vitimas_municipios
-# Cidade
+## vitimas_municipios
+### Cidade
 # http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco
 # http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020 
 # http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan 
 # http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan&uf=ce 
 
-##### Teste com info/
+## Teste com info/
 # http://127.0.0.1:5000/info/media_ocorrencias_ano?key=397a32e6
-# http://127.0.0.1:5000/info/soma_ocorrencias_ano?key=397a32e6
-# http://127.0.0.1:5000/info/soma_ocorrencias_crime?key=397a32e6
-# http://127.0.0.1:5000/info/media_crime_anual?key=397a32e6
-# http://127.0.0.1:5000/info/media_crime_estado_anual?key=397a32e6
-# http://127.0.0.1:5000/info/menos_perigosos?key=397a32e6
+# http://127.0.0.1:5000/info/soma_municipios_estado?key=397a32e6
+# http://127.0.0.1:5000/info/soma_vitimas_crime?key=397a32e6
+# http://127.0.0.1:5000/info/media_ocorrencias_crime_anual?key=397a32e6
+# http://127.0.0.1:5000/info/media_ocorrencias_crime_estado_anual?key=397a32e6
 
 
 #### Teesta com plot/Testativa com gráficos
@@ -200,7 +208,6 @@ def get_graficos():
 
 api.add_resource(Infos, '/info/<pergunta>')  # Rota para requisições pré-cadastradas
 api.add_resource(Bases, '/<base>')  # Rota para filtros para as três bases de dados
-
 
 if __name__ == '__main__':
     app.run()
