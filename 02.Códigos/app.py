@@ -1,16 +1,11 @@
 import pandas as pd
-import plotly
+import plotly as px
 import numpy as np
 import json
 import plotly.graph_objs as go
 from flask import Response,Flask,render_template
 from flask_restful import Resource, Api, request
 from json import loads
-# import matplotlib.pyplot as plt
-# from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-# from matplotlib.figure import Figure
-# import io
-# import random
 
 baseEstados = 'indicadoressegurancapublicaufmar20.xlsx'
 baseMunicipios = 'indicadoressegurancapublicamunicmar20.xlsx'
