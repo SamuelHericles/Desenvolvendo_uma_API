@@ -5,6 +5,13 @@ import plotly.express as px
 from flask import Flask, render_template
 from flask_restful import Resource, Api, request
 from json import load, loads, dumps
+
+import gtk
+width = gtk.gdk.screen_width()
+height = gtk.gdk.screen_height()
+
+print(width,height)
+
 # from os import remove, path
 
 base_estados = 'indicadoressegurancapublicaufmar20.xlsx'
@@ -183,7 +190,7 @@ def get_graficos(plot):
                 df = df.mean()
 
             if 'mapa' in plot:
-                fig = px.choropleth_mapbox(df, geojson=geoJSON_UF_Brasil, color=base, animation_frame='Ano', zoom=1.8,
+                fig = px.choropleth_mapbox(df, geojson=geoJSON_UF_Brasil, color=base, animation_frame='Ano', zoom=3.0,
                                            locations='UF', center={'lat': -14, 'lon': -52}, featureidkey='properties.UF',
                                            title=f'{op} de {base} no Brasil a cada ano', mapbox_style='white-bg',height=800)
             elif 'barras' in plot:
