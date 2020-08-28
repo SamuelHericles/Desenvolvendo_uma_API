@@ -110,7 +110,7 @@ class Bases(Resource):
                 data = data.sort_values(data.columns[-1], ascending=(order == 'ASC')).iloc[:r]
             elif order != '':  # Foi requisitado ordenamento sem ranking
                 data = data.sort_values(data.columns[-1], ascending=(order == 'ASC'))
-
+            elif cid != 
             return loads(add_cabecalho(data, ornt='records'))
         except Exception as e:
             return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
@@ -132,7 +132,7 @@ class Infos(Resource):
 
                 base = data.columns[-1]
 
-                if 'anual' in pergunta or 'mensal' in pergunta and 'municipios' in pergunta:
+                if ('anual' in pergunta or 'mensal' in pergunta) and ('municipios' in pergunta):
                     group.append('Mês/Ano')
                 elif 'anual' in pergunta:
                     group.append('Ano')
@@ -174,6 +174,7 @@ def get_graficos(plot):
     try:
         key = request.args['key'].lower() if 'key' in request.args else ''
         if key in API_KEYS:  # Autenticação
+            fig = 0
             if 'mapa' in plot:
                 if 'ocorrencias' in plot:
                     df = dfOcorrencias
@@ -219,8 +220,10 @@ def get_graficos(plot):
             remove(f'./templates/{op}_{base}.html')
             return rendered
         else:
+            print('Erro!')
             return loads('{"Erro": "Autenticação falhou!"}')
     except Exception as e:
+        prin(f'Erro-225{e.__class__.__name__}')
         return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
 
@@ -231,3 +234,14 @@ def help():
 
 if __name__ == '__main__':
     app.run()
+
+
+# http://127.0.0.1:5000/plot/mapa_soma_ocorrencias?key=397a32e6
+# http://127.0.0.1:5000/plot/mapa_media_ocorrencias?key=397a32e6
+# http://127.0.0.1:5000/plot/mapa_soma_vitimas?key=397a32e6
+# http://127.0.0.1:5000/plot/mapa_media_vitimas?key=397a32e6
+
+# http://127.0.0.1:5000/plot/barras_soma_ocorrencias?key=397a32e6
+# http://127.0.0.1:5000/plot/barras_media_ocorrencias?key=397a32e6
+# http://127.0.0.1:5000/plot/barras_soma_vitimas?key=397a32e6
+# http://127.0.0.1:5000/plot/barras_media_vitimas?key=397a32e6
