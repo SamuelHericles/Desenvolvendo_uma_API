@@ -185,16 +185,16 @@ def get_graficos(plot):
             if 'mapa' in plot:
                 fig = px.choropleth_mapbox(df, geojson=geoJSON_UF_Brasil, color=base, animation_frame='Ano', zoom=1.8,
                                            locations='UF', center={'lat': -14, 'lon': -52}, featureidkey='properties.UF',
-                                           title=f'{op} de {base} no Brasil a cada ano', mapbox_style='white-bg')
+                                           title=f'{op} de {base} no Brasil a cada ano', mapbox_style='white-bg',height=800)
             elif 'barras' in plot:
                 fig = px.bar(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
-                             title=f'{op} de {base} no Brasil a cada ano')
+                             title=f'{op} de {base} no Brasil a cada ano',height=700)
             elif 'scatter' in plot:
                 fig = px.scatter(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
-                                 title=f'{op} de {base} no Brasil a cada ano')
+                                 title=f'{op} de {base} no Brasil a cada ano',height=700)
             elif 'linha' in plot:
                 fig = px.line(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
-                             title=f'{op} de {base} no Brasil a cada ano')
+                             title=f'{op} de {base} no Brasil a cada ano',height=700)
 
             return dumps(loads(fig.to_json()), cls=plotly.utils.PlotlyJSONEncoder)
         else:
