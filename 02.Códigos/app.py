@@ -6,11 +6,8 @@ from flask import Flask, render_template
 from flask_restful import Resource, Api, request
 from json import load, loads, dumps
 
-import gtk
-width = gtk.gdk.screen_width()
-height = gtk.gdk.screen_height()
-
-print(width,height)
+from screeninfo import get_monitors
+ 
 
 # from os import remove, path
 
@@ -190,18 +187,18 @@ def get_graficos(plot):
                 df = df.mean()
 
             if 'mapa' in plot:
-                fig = px.choropleth_mapbox(df, geojson=geoJSON_UF_Brasil, color=base, animation_frame='Ano', zoom=3.0,
+                fig = px.choropleth_mapbox(df, geojson=geoJSON_UF_Brasil, color=base, animation_frame='Ano', zoom=3.5,
                                            locations='UF', center={'lat': -14, 'lon': -52}, featureidkey='properties.UF',
-                                           title=f'{op} de {base} no Brasil a cada ano', mapbox_style='white-bg',height=800)
+                                           title=f'{op} de {base} no Brasil a cada ano', mapbox_style='white-bg',height=get_monitors()[0].height*.7)
             elif 'barras' in plot:
                 fig = px.bar(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
-                             title=f'{op} de {base} no Brasil a cada ano',height=700)
+                             title=f'{op} de {base} no Brasil a cada ano',height=get_monitors()[0].height*.7)
             elif 'scatter' in plot:
                 fig = px.scatter(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
-                                 title=f'{op} de {base} no Brasil a cada ano',height=700)
+                                 title=f'{op} de {base} no Brasil a cada ano',height=get_monitors()[0].height*.7)
             elif 'linha' in plot:
                 fig = px.line(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
-                             title=f'{op} de {base} no Brasil a cada ano',height=700)
+                             title=f'{op} de {base} no Brasil a cada ano',height=get_monitors()[0].height*.7)
 
             return dumps(loads(fig.to_json()), cls=plotly.utils.PlotlyJSONEncoder)
         else:
