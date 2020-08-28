@@ -93,7 +93,7 @@ def add_cabecalho(data, base='', ornt='columns'):  # Add cabeçalho em todas as 
 class Bases(Resource):
     def get(self, base):
         try:
-            key, cid, uf, regiao, crime, ano, mes, r, order, est = arguments(request.args)
+            key, cid, uf, regiao, crime, ano, mes, r, order = arguments(request.args)
             if key in API_KEYS:  # Autenticação
                 if base == 'vitimas':
                     data = get_ocorrencias(dfVitimas, uf, crime, ano, regiao, mes)
@@ -195,7 +195,7 @@ def get_graficos(plot):
                 fig = px.choropleth_mapbox(df, geojson=estados, color=base, locations='UF', featureidkey='properties.UF',
                                            animation_frame='Ano', title=f'{op} de {base} no Brasil a cada ano',
                                            mapbox_style='white-bg', center={'lat': -14, 'lon': -52}, zoom=2.8)
-            elif 'barras' in plot:
+            elif 'br' in plot:
                 if 'ocorrencias' in plot:
                     df = dfOcorrencias
                 elif 'vitimas' in plot:
@@ -213,6 +213,46 @@ def get_graficos(plot):
 
                 fig = px.bar(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
                              title=f'{op} de {base} no Brasil a cada ano')
+
+            elif 'sct' in plot:
+                if 'ocorrencias' in plot:
+                    df = dfOcorrencias
+                elif 'vitimas' in plot:
+                    df = dfVitimas
+
+                base = df.columns[-1]
+                df = df.groupby(['UF', 'Tipo Crime', 'Ano'], as_index=False)
+
+                if 'soma' in plot:
+                    op = 'Soma'
+                    df = df.sum()
+                elif 'media' in plot:
+                    op = 'Média'
+                    df = df.mean()
+
+                fig = px.scatter(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
+                             title=f'{op} de {base} no Brasil a cada ano')
+
+
+            elif 'ln' in plot:
+                if 'ocorrencias' in plot:
+                    df = dfOcorrencias
+                elif 'vitimas' in plot:
+                    df = dfVitimas
+
+                base = df.columns[-1]
+                df = df.groupby(['UF', 'Tipo Crime', 'Ano'], as_index=False)
+
+                if 'soma' in plot:
+                    op = 'Soma'
+                    df = df.sum()
+                elif 'media' in plot:
+                    op = 'Média'
+                    df = df.mean()
+
+                fig = px.line(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
+                             title=f'{op} de {base} no Brasil a cada ano')
+
 
             fig.write_html(f'./templates/{op}_{base}.html')
             rendered = render_template(f'{op}_{base}.html')
