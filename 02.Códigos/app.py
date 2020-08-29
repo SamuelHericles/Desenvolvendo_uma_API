@@ -1,15 +1,10 @@
 import pandas as pd
 import plotly
-# import plotly.graph_objs as go
 import plotly.express as px
 from flask import Flask, render_template
 from flask_restful import Resource, Api, request
 from json import load, loads, dumps
 
-from screeninfo import get_monitors
- 
-
-# from os import remove, path
 
 base_estados = 'indicadoressegurancapublicaufmar20.xlsx'
 base_municipios = 'indicadoressegurancapublicamunicmar20.xlsx'
@@ -23,7 +18,7 @@ UFs = {'Acre': 'AC', 'Alagoas': 'AL', 'Amapá': 'AP', 'Amazonas': 'AM', 'Bahia':
        'Pernambuco': 'PE', 'Piauí': 'PI', 'Rio de Janeiro': 'RJ', 'Rio Grande do Norte': 'RN', 'Rio Grande do Sul': 'RS',
        'Rondônia': 'RO', 'Roraima': 'RR', 'Santa Catarina': 'SC', 'São Paulo': 'SP', 'Sergipe': 'SE', 'Tocantins': 'TO'}
 
-geoJSON_UF_Brasil = load(open('../01.Dados/JSON/Brasil.json'))
+geoJSON_UF_Brasil = load(open('../01.Dados/GeoJSON/Brasil.json'))
 
 # Carrega bases dos estados
 dFrame = pd.ExcelFile(f'../01.Dados/{base_estados}')
@@ -97,28 +92,28 @@ def add_cabecalho(data, base='', ornt='columns'):  # Add cabeçalho em todas as 
 
 class Bases(Resource):
     def get(self, base):
-        # try:
-        key, cid, uf, regiao, crime, ano, mes, r, order = arguments(request.args)
-        if key in API_KEYS:  # Autenticação
-            if base == 'vitimas':
-                data = get_ocorrencias(dfVitimas, uf, crime, ano, regiao, mes)
-            elif base == 'ocorrencias':
-                data = get_ocorrencias(dfOcorrencias, uf, crime, ano, regiao, mes)
-            elif base == 'vitimas_municipios':
-                data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
+        try:
+            key, cid, uf, regiao, crime, ano, mes, r, order = arguments(request.args)
+            if key in API_KEYS:  # Autenticação
+                if base == 'vitimas':
+                    data = get_ocorrencias(dfVitimas, uf, crime, ano, regiao, mes)
+                elif base == 'ocorrencias':
+                    data = get_ocorrencias(dfOcorrencias, uf, crime, ano, regiao, mes)
+                elif base == 'vitimas_municipios':
+                    data = get_vitimas_municipios(cid, uf, regiao, mes, ano)
+                else:
+                    return loads('{"Erro": "Por Favor, verifique a sua requisição."}')
             else:
-                return loads('{"Erro": "Por Favor, verifique a sua requisição."}')
-        else:
-            return loads('{"Erro": "Autenticação falhou!"}')
+                return loads('{"Erro": "Autenticação falhou!"}')
 
-        if r != '':  # Foi requisitado o ranking
-            data = data.sort_values(data.columns[-1], ascending=(order == 'ASC')).iloc[:r]
-        elif order != '':  # Foi requisitado ordenamento sem ranking
-            data = data.sort_values(data.columns[-1], ascending=(order == 'ASC'))
+            if r != '':  # Foi requisitado o ranking
+                data = data.sort_values(data.columns[-1], ascending=(order == 'ASC')).iloc[:r]
+            elif order != '':  # Foi requisitado ordenamento sem ranking
+                data = data.sort_values(data.columns[-1], ascending=(order == 'ASC'))
 
-        return loads(add_cabecalho(data, ornt='records'))
-        # except Exception as e:
-        #     return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
+            return loads(add_cabecalho(data, ornt='records'))
+        except Exception as e:
+            return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
 
 class Infos(Resource):
@@ -180,25 +175,46 @@ def get_graficos(plot):
             df = df.groupby(group, as_index=False)
 
             if 'soma' in plot:
-                op = 'Soma'
+                title = f'Soma de {base} no Brasil a cada ano'
                 df = df.sum()
             elif 'media' in plot:
-                op = 'Média'
+                title = f'Média de {base} no Brasil a cada ano'
                 df = df.mean()
 
             if 'mapa' in plot:
-                fig = px.choropleth_mapbox(df, geojson=geoJSON_UF_Brasil, color=base, animation_frame='Ano', zoom=3.5,
-                                           locations='UF', center={'lat': -14, 'lon': -52}, featureidkey='properties.UF',
-                                           title=f'{op} de {base} no Brasil a cada ano', mapbox_style='white-bg',height=get_monitors()[0].height*.7)
+                fig = px.choropleth_mapbox(df, geojson=geoJSON_UF_Brasil, color=base, animation_frame='Ano', zoom=2.5,
+                                           locations='UF', center={'lat': -14, 'lon': -52}, mapbox_style='white-bg',
+                                           featureidkey='properties.UF', height=600, title=title)
             elif 'barras' in plot:
-                fig = px.bar(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
-                             title=f'{op} de {base} no Brasil a cada ano',height=get_monitors()[0].height*.7)
+                fig = px.bar(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano', title=title, height=600)
             elif 'scatter' in plot:
-                fig = px.scatter(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
-                                 title=f'{op} de {base} no Brasil a cada ano',height=get_monitors()[0].height*.7)
+                fig = px.scatter(df, x='Tipo Crime', y=base, color='Tipo Crime', animation_frame='Ano',
+                                 opacity=0.9, size=base, title=title, height=600)
             elif 'linha' in plot:
-                fig = px.line(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano',
-                             title=f'{op} de {base} no Brasil a cada ano',height=get_monitors()[0].height*.7)
+                fig = px.line(df, x='Ano', y=base, color='UF', animation_frame='Tipo Crime', title=title, height=600)
+                fig.update_layout(updatemenus=[
+                    dict(
+                        buttons=list([
+                            dict(
+                                args=["type", "line"],
+                                label="Linha",
+                                method="restyle"
+                            ),
+                            dict(
+                                args=["type", "scatter"],
+                                label="Dispersão",
+                                method="restyle"
+                            )
+                        ]),
+                        direction="down",
+                        pad={"r": 10, "t": 10},
+                        showactive=True,
+                        x=0,
+                        xanchor="left",
+                        y=0,
+                        yanchor="top"
+                    ),
+                ])
 
             return dumps(loads(fig.to_json()), cls=plotly.utils.PlotlyJSONEncoder)
         else:
