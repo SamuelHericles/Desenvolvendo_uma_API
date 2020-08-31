@@ -4,6 +4,7 @@ import plotly.express as px
 from flask import Flask, render_template
 from flask_restful import Resource, Api, request
 from json import load, loads, dumps
+from time import time_ns
 
 
 base_estados = 'indicadoressegurancapublicaufmar20.xlsx'
@@ -17,9 +18,17 @@ UFs = {'Acre': 'AC', 'Alagoas': 'AL', 'Amapá': 'AP', 'Amazonas': 'AM', 'Bahia':
        'Mato Grosso do Sul': 'MS', 'Minas Gerais': 'MG', 'Pará': 'PA', 'Paraíba': 'PB', 'Paraná': 'PR',
        'Pernambuco': 'PE', 'Piauí': 'PI', 'Rio de Janeiro': 'RJ', 'Rio Grande do Norte': 'RN', 'Rio Grande do Sul': 'RS',
        'Rondônia': 'RO', 'Roraima': 'RR', 'Santa Catarina': 'SC', 'São Paulo': 'SP', 'Sergipe': 'SE', 'Tocantins': 'TO'}
+capitais = ['Rio Branco', 'Maceió', 'Macapá', 'Manaus', 'Salvador', 'Fortaleza', 'Brasília', 'Vitória', 'Goiânia', 
+            'São Luís', 'Cuiabá', 'Campo Grande', 'Belo Horizonte', 'Belém', 'João Pessoa', 'Curitiba', 'Recife', 
+            'Teresina', 'Rio De Janeiro', 'Natal', 'Porto Alegre', 'Porto Velho', 'Boa Vista', 'Florianópolis',
+            'São Paulo', 'Aracaju', 'Palmas']
+
 
 geoJSON_UF_Brasil = load(open('../01.Dados/GeoJSON/Brasil.json'))
+JSON_Municipios_Brasil = load(open('../01.Dados/GeoJSON/municipios.json', 'rb'))
 
+t = time_ns() // 1000000000
+print('Iniciando importação das bases...')
 # Carrega bases dos estados
 dFrame = pd.ExcelFile(f'../01.Dados/{base_estados}')
 dfOcorrencias = pd.read_excel(dFrame, 'Ocorrências')
@@ -31,6 +40,8 @@ for UF in dfOcorrencias['UF'].unique():  # Modifica UF de cada registro. Ex.: Ac
 # Carrega bases dos municipios e as concatena
 dFrame = pd.ExcelFile(f'../01.Dados/{base_municipios}')
 dfVitimasMunicipios = pd.concat(pd.read_excel(dFrame, sheet_name=None))
+t = (time_ns() // 1000000000) - t
+print(f'Bases importadas com Sucesso! {t}s')
 
 
 def get_ocorrencias(df, uf='', tipo_crime='', ano='', regiao='', mes=''):  # Aplica os filtros em Ocorrencias ou Vitimas
@@ -169,10 +180,15 @@ def get_graficos(plot):
                 df = dfOcorrencias
             elif 'vitimas' in plot:
                 df = dfVitimas
+            elif 'capitais' in plot:
+                df = dfVitimasMunicipios
 
             base = df.columns[-1]
-            group = ['UF', 'Ano'] if 'mapa' in plot else ['UF', 'Tipo Crime', 'Ano']
-            df = df.groupby(group, as_index=False)
+            if 'capitais' in plot:
+                group = ['Município', 'Sigla UF', 'Mês/Ano']
+            else:
+                group = ['UF', 'Ano'] if 'mapa' in plot else ['UF', 'Tipo Crime', 'Ano']
+                df = df.groupby(group, as_index=False)
 
             if 'soma' in plot:
                 title = f'Soma de {base} no Brasil a cada ano'
@@ -185,6 +201,12 @@ def get_graficos(plot):
                 fig = px.choropleth_mapbox(df, geojson=geoJSON_UF_Brasil, color=base, animation_frame='Ano', zoom=2.5,
                                            locations='UF', center={'lat': -14, 'lon': -52}, mapbox_style='white-bg',
                                            featureidkey='properties.UF', height=600, title=title)
+            elif 'capitais' in plot:
+                df = df.loc[df['Município'].isin(capitais)]
+                df = df.groupby(['Município'], as_index=False).sum()
+                lat = [municipio['latitude'] for municipio in JSON_Municipios_Brasil if municipio['capital']]
+                lng = [municipio['longitude'] for municipio in JSON_Municipios_Brasil if municipio['capital']]
+                fig = px.scatter_mapbox(df, height=600, size='Vítimas', lat=lat, lon=lng, color='Município')
             elif 'barras' in plot:
                 fig = px.bar(df, x='UF', y=base, color='Tipo Crime', animation_frame='Ano', title=title, height=600)
             elif 'scatter' in plot:
