@@ -61,7 +61,7 @@
             A API (Application Programming Interface) desenvolvida busca gerenciar as bases de dados livres sobre Ocorrências Criminais (SINESP - Ministério da Justiça) disponíveis no link: http://dados.gov.br/dataset/sistema-nacional-de-estatisticas-de-seguranca-publica.<br>
             Todas suas requisições são interpretadas a partir do método GET, portanto tudo pode ser requisitado diretamente pela URL. As respostas para as requisições de consulta à API estão no formato JSON e possuem a seguinte estrutura:<br>
         </p>
-        <img src='Capturar.PNG' id='img1'>
+        <img src="{{url_for('static', filename='Capturar.PNG')}}" id="img1">
 
         <p>
             A API também pode retornar uma página HTML para requisições de plotagem de mapas e gráficos.<br>
@@ -70,7 +70,7 @@
         </p>
 
         <h2>Estrutura</h2>
-        <img src='estrutura.PNG' id='img2'>
+        <img src="{{url_for('static', filename='estrutura.PNG')}}" id="img2">
         
         
         <h2>Buscas</h2>
