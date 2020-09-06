@@ -110,7 +110,6 @@ class Bases(Resource):
                 data = data.sort_values(data.columns[-1], ascending=(order == 'ASC')).iloc[:r]
             elif order != '':  # Foi requisitado ordenamento sem ranking
                 data = data.sort_values(data.columns[-1], ascending=(order == 'ASC'))
-            elif cid != 
             return loads(add_cabecalho(data, ornt='records'))
         except Exception as e:
             return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
@@ -223,7 +222,7 @@ def get_graficos(plot):
             print('Erro!')
             return loads('{"Erro": "Autenticação falhou!"}')
     except Exception as e:
-        prin(f'Erro-225{e.__class__.__name__}')
+        print(f'Erro-225{e.__class__.__name__}')
         return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
 
