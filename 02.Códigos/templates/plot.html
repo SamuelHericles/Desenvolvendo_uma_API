@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head lang="pt-br">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Lucas S, Samuel H, João V, Pedro H">
+    <meta name="generator" content="Pycharm & VS Code">
+    <meta name="description" content="Gráficos interativos">
+    <meta name="keywords" content="Python, Flask, Pandas, Plotly, API, Ciência de Dados">
+    <title>Plots de Ocorrências Criminais</title>
+</head>
+<body>
+    <div class="chart" id="bargraph"></div>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+    <script>
+        var graphs = {{plot | safe}}
+        Plotly.plot('bargraph', graphs, {})
+    </script>
+</body>
+</html>

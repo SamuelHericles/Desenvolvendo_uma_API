@@ -1,8 +1,10 @@
-import pandas as pd
-import plotly.express as px
 from flask import Flask, render_template
 from flask_restful import Resource, Api, request
-from json import load, loads
+from json import load, loads, dumps
+import func as fp
+import load_bases as ld
+import requisicoes as reqsis
+import get_base_args as gargs
 from os import remove
 
 baseEstados = 'indicadoressegurancapublicaufmar20.xlsx'
@@ -164,8 +166,8 @@ class Infos(Resource):
 app = Flask('Ocorrências Criminais')
 api = Api(app)
 
-api.add_resource(Infos, '/info/<pergunta>')  # Rota para requisições pré-cadastradas
-api.add_resource(Bases, '/<base>')  # Rota para filtros para as três bases de dados
+api.add_resource(reqsis.Infos, '/info/<pergunta>')  # Rota para requisições pré-cadastradas
+api.add_resource(reqsis.Bases, '/<base>')  # Rota para filtros para as três bases de dados
 
 
 @app.route('/plot/<plot>')
@@ -225,6 +227,14 @@ def get_graficos(plot):
         print(f'Erro-225{e.__class__.__name__}')
         return loads(f'{{"Erro": "Por Favor, verifique a sua requisição.", "Excessão": "{e.__class__.__name__}"}}')
 
+def show_plot(plot):
+    json_graph = reqsis.get_graficos(plot)
+    if 'Erro' in json_graph:
+        return json_graph
+    else:
+        return render_template('plot.html', plot=json_graph)
+
+
 
 @app.route('/')
 def help():
@@ -233,14 +243,3 @@ def help():
 
 if __name__ == '__main__':
     app.run()
-
-
-# http://127.0.0.1:5000/plot/mapa_soma_ocorrencias?key=397a32e6
-# http://127.0.0.1:5000/plot/mapa_media_ocorrencias?key=397a32e6
-# http://127.0.0.1:5000/plot/mapa_soma_vitimas?key=397a32e6
-# http://127.0.0.1:5000/plot/mapa_media_vitimas?key=397a32e6
-
-# http://127.0.0.1:5000/plot/barras_soma_ocorrencias?key=397a32e6
-# http://127.0.0.1:5000/plot/barras_media_ocorrencias?key=397a32e6
-# http://127.0.0.1:5000/plot/barras_soma_vitimas?key=397a32e6
-# http://127.0.0.1:5000/plot/barras_media_vitimas?key=397a32e6

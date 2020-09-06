@@ -10,53 +10,231 @@
         <title>API de Dados de Ocorências Criminais (#equipe4)</title>
         <style>
             html {
-                background-color:  #465a63;
+                background-color:  #B0C4DE;
                 color: #dbedf3;
                 text-align: center;
             }
 
-            h3, a {
-                color: #ed6363;
-                text-decoration: none;
+            body {
+                width: 65%;
+                margin: 0px auto;
             }
+
+            p,a,h2,h3 {
+                font-weight: bolder;
+                color: black;
+                text-decoration: none;
+                padding-left: 10px;
+                text-align: justify;
+            }
+
+            p {
+                font-size: 19px;
+            }
+
+            #img1 {
+                width: 60%;
+            }
+
+            #img2 {
+                width: 25%;
+            }
+
+            h2,h3{
+                color: rgb(15, 0, 150);
+            }
+
+            .ips {
+                text-align: center;
+                padding-top: 7px;
+                padding-bottom: 7px;
+                color:darkslategray;
+            }
+
         </style>
     </head>
     <body>
-        <h1>API de Dados de Ocorências Criminais (#equipe4)</h1>
+        <h1>Documentação da API de Ocorências Criminais (#equipe4)</h1>
         <br>
 
-        <h2>Base de Vítimas</h2>
-        <h3><a href="http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE</a></h3>
-        <h3><a href="http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018</a></h3>
-        <h3><a href="http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le</a></h3>
-        <h3><a href="http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan</a></h3>
+        <p>
+            A API (Application Programming Interface) desenvolvida busca gerenciar as bases de dados livres sobre Ocorrências Criminais (SINESP - Ministério da Justiça) disponíveis no link: http://dados.gov.br/dataset/sistema-nacional-de-estatisticas-de-seguranca-publica.<br>
+            Todas suas requisições são interpretadas a partir do método GET, portanto tudo pode ser requisitado diretamente pela URL. As respostas para as requisições de consulta à API estão no formato JSON e possuem a seguinte estrutura:<br>
+        </p>
+        <img src='Capturar.PNG' id='img1'>
+
+        <p>
+            A API também pode retornar uma página HTML para requisições de plotagem de mapas e gráficos.<br>
+            A seguir serão explicadas todas as requisições que a API é capaz de responder. A tag <IP> será utilizada para simbolizar o IP Público ou DNS da API e a tag <API_KEY> simboliza a sua chave de autenticação na API.<br>
+            Se a requisição estiver com algum erro em sua construção, ou o argumento key não estiver contido na requisição ou na lista de <API_KEY> autorizadas, a API retorna um JSON simples alertando sobre o problema.<br>
+        </p>
+
+        <h2>Estrutura</h2>
+        <img src='estrutura.PNG' id='img2'>
+        
+        
+        <h2>Buscas</h2>
+        
+        <h3>Buscas por bases completas</h3>
+            <p>Você pode buscar todo o conteúdo de uma base de dados</p>
+            <p>Busca por ocorrências de crimes</p>
+            <p class="ips">&lt;IP&gt;/ocorrencias?key=&lt;API_KEY&gt;</p>
+
+            <p>Busca por vítimas fatais</p>
+            <p class="ips">&lt;IP&gt;/vitimas?key=&lt;API_KEY&gt;</p>
+            
+            <p>Busca por vítimas em cada município</p>
+            <p class="ips">&lt;IP&gt;/vitimas_municipios?key=&lt;API_KEY&gt;</p>
+
+        
+
+        <h3>Busca filtrada por cada campo disponível</h3>
+        <p>A partir de cada uma das bases requisitadas, mostradas acima, é possível realizar buscas à dados segundo alguma filtragem que desejar. Para requisitar à API os dados filtrados por algum campo disponível na base, basta acessar:</p>
+        <p class="ips">&lt;IP&gt;/&lt;BASE&gt;?key=&lt;API_KEY&gt;&&lt;CAMPO&gt;=&lt;VALOR&gt;</p>
+        <p>Sendo que, a tag &lt;BASE&gt; representa qual base você deseja filtrar (ocorrencias, vitimas ou vitimas_municipios), e a tag &lt;CAMPO&gt; representa algum dos campos apresentados abaixo e, a tag &lt;VALORO&gt;
+           representa o valor daquele que você deseja filtrar dos dados da base.</p>
         <br>
 
-        <h2>Base de Ocorrências</h2>
-        <h3><a href="http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE</a></h3>
-        <h3><a href="http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018</a></h3>
-        <h3><a href="http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le</a></h3>
-        <h3><a href="http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan</a></h3>
+        <p>A. filtragem por Estado</p>
+        <p>Para filtrar os dados das bases pelo estado, você pode requisitar:</p>
+        <p class="ips">&lt;IP&gt;/&lt;BASE&gt;?key=&lt;API_KEY&gt;&uf=&lt;VALOR&gt;</p>
+        <p>Os possíveis valores para este campo são: AC, AL, AP, AM, BA, CE, DF, ES, GO, MA, MT, MS, MG, PA, PB, PR, PE, PI, RJ, RN, RS, RO, RR, SC, SP, SE e TO não necessariamente em caixa alta</p>
         <br>
 
-        <h2>Base de Vítimas por município</h2>
-        <h3><a href="http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco</a></h3>
-        <h3><a href="http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020</a></h3>
-        <h3><a href="http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan</a></h3>
-        <h3><a href="http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan&uf=ce" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan&uf=ce</a></h3>
+        <p>B. Filtragem por tipo de crime</p>
+        <p>Para filtrar os dados das bases pelo tipo de crime, você pode requisitar:</p>
+        <p class="ips">&lt;IP&gt;/&lt;BASE&gt;?key=&lt;API_KEY&gt;&crime=&lt;VALOR&gt;</p>
+        <p>Os possíveis valores para este campo são: Estupro, Furto de veículo, Homicídio doloso, Lesão corporal seguida de morte, Roubo à instituição financeira, Roubo de carga, Roubo de veículo, Roubo seguido de morte (latrocínio) e Tentativa de homicídio.
+         Não há necessidade de escrever completamente o tipo de crime, a busca é concretizada quando o valor passado está contido no campo selecionado. Este filtro só é possível apenas nas bases de ocorrencias e vitimas, já que a base de vitimas_municipios
+         é composta por apenas ocorrências de homicídios dolosos. </p>
+         <br>
+
+         <p>C. Filtragem por ano</p>
+         <p>Para filtrar os dados das bases pelo ano, você pode requisitar:</p>
+         <p class="ips">&lt;IP&gt;/&lt;BASE&gt;?key=&lt;API_KEY&gt;&ano=&lt;VALOR&gt;</p>
+         <p>Por limitações dos dados da própria base, são permitidas apenas os anos entre 2015 e 2020.</p>
+         <br>
+
+         <p>D. Filtragem por mês</p>
+         <p>Para filtrar os dados das bases pelo mês, você pode requisitar:</p>
+         <p class="ips">&lt;IP&gt;/&lt;BASE&gt;?key=&lt;API_KEY&gt;&mes=&lt;VALOR&gt;</p>
+         <p>O valor passado deve ser o nome do mês por extenso.</p>
+         <br>
+
+         <p>E. Filtragem por região</p>
+         <p>Para filtrar os dados por região, você pode requisitar: </p>
+         <p class="ips">&lt;IP&gt;/&lt;BASE&gt;?key=&lt;API_KEY&gt;&regiao=&lt;VALOR&gt;</p>
+         <p>Que os valores são compreendidos nestes: NORTE,NORDESTE,CENTRO-OESTE,SUDESTE e SUL</p>
+         <br>
+        
+        <p>F. Filtragem por cidade</p>
+        <p>Para filtrar os dados exclusivamente da base vitimas_municipios pela cidade, você pode requisitar:</p>
+        <p class="ips">&lt;IP&gt;/&lt;BASE&gt;?key=&lt;API_KEY&gt;&cid=&lt;VALOR&gt;</p>         
+        <p>Para agregar filtros em uma mesma requisição, basta você separá-los pelo caractere especial &, como no exemplo abaixo:</p>
+        <p class="ips">&lt;IP&gt;/&lt;BASE&gt;?key=&lt;API_KEY&gt;&&lt;CAMPO1&gt;=&lt;VALOR1&gt;&&lt;CAMPO2&gt;&lt;VALOR2&gt;</p>         
         <br>
 
-        <h2>Buscas pré-cadastradas com agrupamento</h2>
-        <h3><a href="http://127.0.0.1:5000/info/media_ocorrencias_ano?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/media_ocorrencias_ano?key=397a32e6</a></h3>
-        <h3><a href="http://127.0.0.1:5000/info/soma_municipios_estado?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/soma_municipios_estado?key=397a32e6</a></h3>
-        <h3><a href="http://127.0.0.1:5000/info/soma_vitimas_crime?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/soma_vitimas_crime?key=397a32e6</a></h3>
-        <h3><a href="http://127.0.0.1:5000/info/media_ocorrencias_crime_anual?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/media_ocorrencias_crime_anual?key=397a32e6</a></h3>
-        <h3><a href="http://127.0.0.1:5000/info/media_ocorrencias_crime_estado_anual?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/media_ocorrencias_crime_estado_anual?key=397a32e6</a></h3>
+
+        <h3>Rankeamento</h3>
+
+        <p>Em qualquer requisição pode ser agregado o campo ranking que realiza um ordenamento na base de dados e retorna a quantidade de registros passados no valor deste campo, por exemplo:</p>
+        <p class="ips">&lt;IP&gt;/vitimas?key=&lt;API_KEY&gt;&ano=2015&ranking=10</p>      
+        <p>Esta busca irá retornar os 10 registros com maior número de vítimas fatais no ano de 2015.</p>
+        
+        <p>Ordenação do rankeamento</p>
+        <p>É possível também, alterar o sentido de ordenação dos registros retornado pela API, o padrão é o valor DESC, que ordena os registros de forma decrescente, mas se preferir pode alterá-lo para ASC, e então receber os dados ordenados de forma crescente. Por exemplo:</p>
+        <p class="ips">&lt;IP&gt;/vitimas?key=&lt;API_KEY&gt;&ano=2015&ranking=10&order=ASC</p>      
+        <p>Esta busca irá retornar os 10 registros com menor número de vítimas fatais no ano de 2015.</p>
+
+
+        <h3>Requisições pré-definidas</h3>
+        <p>A fim de tornar a API mais prática, foram desenvolvidas algumas requisições para simplificar a URL e trazer respostas para possíveis perguntas sobre as bases de dados. Para ter acesso às requisições pré-definidas na API, basta acessar:</p>
+        <p class="ips">&lt;IP&gt;/info/>&lt;PERGUNTA&gt;?key=&lt;API_KEY&gt;</p>
+        <p>Onde &lt;PERGUNTA&gt; é o identificador das requisições pré-definidas. A seguir serão apresentadas algumas dessas requisições.</p>
+        
+        <p>Média de ocorrências a cada ano:</p>
+        <p class="ips">&lt;IP&gt;/info/>&lt;media_ocorrencias_anual&gt;?key=&lt;API_KEY&gt;</p>
+
+    
+        <p>Média de ocorrências a cada mês:</p>
+        <p class="ips">&lt;IP&gt;/info/>&lt;media_ocorrencias_mensal&gt;?key=&lt;API_KEY&gt;</p>
+
+        
+        <p>Média de vítimas a cada ano:</p>
+        <p class="ips">&lt;IP&gt;/info/>&lt;media_ocorrencias_mensal&gt;?key=&lt;API_KEY&gt;</p>
+        
+        <p>Média de vítimas a cada mês:</p>
+        <p class="ips">&lt;IP&gt;/info/>&lt;media_vitimas_mensal&gt;?key=&lt;API_KEY&gt;</p>
+        
+        <p>Média de município a cada ano:</p>
+        <p class="ips">&lt;IP&gt;/info/>&lt;media_municipios_anual&gt;?key=&lt;API_KEY&gt;</p>
+        
+        
+        <p>Média de município a cada mês:</p>
+        <p class="ips">&lt;IP&gt;/info/>&lt;media_municipios_mensal&gt;?key=&lt;API_KEY&gt;</p>
+        
+        
+        <h3>Plotagens</h3>
+        <p>Outra idéia de tornar a API mais interativa, foram desenvolvidas algumas funcionalidades para criação de gráficos dinâmicos. Os gráficos são retornados como uma página HTML que é interpretada pelo próprio navegador que o requisitou.
+        Para ter acesso aos gráficos gerados pela API, basta acessar:</p>
+        <p class="ips">&lt;IP&gt;/plot/>&lt;PLOT&gt;?key=&lt;API_KEY&gt;</p>
+        
+        <p>Onde <PLOT> é o identificador do tipo de gráfico e quais informações serão apresentadas.</p>
+        
+        <p>A tag <PLOT> segue o seguinte padrão de construção:</p>
+        <p class="ips">&lt;IP&gt;/plot/>&lt;PLOT&gt;?key=&lt;API_KEY&gt;</p>
+
+        <p>&lt;TIPO_GRAFICO&gt;_&lt;OPERACAO&gt;_&lt;BASE&gt;</p>
+
+        
+        <p>Onde&lt;TIPO_GRAFICO&gt; pode assumir os valores mapa, barras e linha, &lt;OPERACAO&gt; seria uma operação estatísticas de soma ou média e &lt;BASE&gt; seria uma das base dados disponíveis sendo elas: vitimas, ocorrencias, vitimas_municipios.</p>
+        <p>A seguir serão listadas as possíveis requisições para geração dos gráficos.</p>
+        
+        <p>Plotar no mapa do Brasil a média de ocorrências em todos os estados:</p>
+        <p class="ips">&lt;IP&gt;/plot/>&lt;mapa_media_ocorrencias&gt;?key=&lt;API_KEY&gt;</p>
+
+        <p>Plotar a média de ocorrências de cada tipo de crime em cada estado brasileiro em um gráfico de barras:</p>
+        <p class="ips">&lt;IP&gt;/plot/>&lt;barras_media_ocorrencias&gt;?key=&lt;API_KEY&gt;</p>
+        
+        <p>Plotar a soma de ocorrências de cada tipo de crime em cada estado brasileiro em um gráfico de linhas:</p>
+        <p class="ips">&lt;IP&gt;/plot/>&lt;linha_soma_ocorrencias&gt;?key=&lt;API_KEY&gt;</p>
+        
+
+        <h2>Testes</h2>
+        <h3>Base de Vítimas</h3>
+        <p><a href="http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE</a></p>
+        <p><a href="http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018</a></p>
+        <p><a href="http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le</a></p>
+        <p><a href="http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan</a></p>
         <br>
 
-        <h2>Gráficos interativos</h2>
-        <h3><a href="http://127.0.0.1:5000/plot/barras_media_ocorrencias?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/plot/barras_media_ocorrencias?key=397a32e6</a></h3>
-        <h3><a href="http://127.0.0.1:5000/plot/mapa_soma_ocorrencias?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/plot/mapa_soma_ocorrencias?key=397a32e6</a></h3>
+        <h3>Base de Ocorrências</h3>
+        <p><a href="http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE</a></p>
+        <p><a href="http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018</a></p>
+        <p><a href="http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le</a></p>
+        <p><a href="http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan</a></p>
+        <br>
+
+        <h3>Base de Vítimas por município</h3>
+        <p><a href="http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco</a></p>
+        <p><a href="http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020</a></p>
+        <p><a href="http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan</a></p>
+        <p><a href="http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan&uf=ce" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan&uf=ce</a></p>
+        <br>
+
+        <h3>Buscas pré-cadastradas com agrupamento</h3>
+        <p><a href="http://127.0.0.1:5000/info/media_ocorrencias_ano?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/media_ocorrencias_anual?key=397a32e6</a></p>
+        <p><a href="http://127.0.0.1:5000/info/soma_municipios_estado?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/soma_municipios_estado?key=397a32e6</a></p>
+        <p><a href="http://127.0.0.1:5000/info/soma_vitimas_crime?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/soma_vitimas_crime?key=397a32e6</a></p>
+        <p><a href="http://127.0.0.1:5000/info/media_ocorrencias_crime_anual?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/media_ocorrencias_crime_anual?key=397a32e6</a></p>
+        <p><a href="http://127.0.0.1:5000/info/media_ocorrencias_crime_estado_anual?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/media_ocorrencias_crime_estado_anual?key=397a32e6</a></p>
+        <br>
+
+        <h3>Gráficos interativos</h3>
+        <p><a href="http://127.0.0.1:5000/plot/scatter_soma_ocorrencias?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/plot/scatter_soma_ocorrencias?key=397a32e6</a></p>
+        <p><a href="http://127.0.0.1:5000/plot/mapa_soma_ocorrencias?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/plot/mapa_soma_ocorrencias?key=397a32e6</a></p>
+        <p><a href="http://127.0.0.1:5000/plot/linha_soma_ocorrencias?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/plot/linha_soma_ocorrencias?key=397a32e6</a></p>
+        <p><a href="http://127.0.0.1:5000/plot/barras_media_ocorrencias?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/plot/barras_media_ocorrencias?key=397a32e6</a></p>
         <br>
     </body>
 </html>
