@@ -19,7 +19,7 @@ class Consts:
            'Sergipe': 'SE', 'Tocantins': 'TO'}
 
     def get_geoJSON_UF_Brasil(self=None):
-        return load(open('../01.Dados/GeoJSON/Brasil.json'))
+        return load(open('../Bases/GeoJSON/Brasil.json'))
 
 
 class LoadBases:
