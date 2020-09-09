@@ -24,8 +24,8 @@ class Consts:
 
 class LoadBases:
     def __init__(self):
-        self.dfEstados = pd.ExcelFile(f'../01.Dados/{Consts.base_estados}')
-        self.dfMunicipios = pd.ExcelFile(f'../01.Dados/{Consts.base_municipios}')
+        self.dfEstados = pd.ExcelFile(f'../Bases/{Consts.base_estados}')
+        self.dfMunicipios = pd.ExcelFile(f'../Bases/{Consts.base_municipios}')
 
     def __conversaoUFs(self, df):
         for UF in df['UF'].unique():  # Modifica UF de cada registro. Ex.: Acre -> AC
