@@ -1,12 +1,12 @@
 from flask import Flask, render_template, url_for
 from flask_restful import Api
 from json import loads
-from time import time_ns
+from time import time
 import util
 import trata_requisicoes
 
 # Inicialização
-t = time_ns() // 1000000000
+t = time()
 print('Iniciando importação das bases...')
 
 load = util.LoadBases()
@@ -14,8 +14,7 @@ dfOcorrencias = load.load_base_estado('Ocorrências')
 dfVitimas = load.load_base_estado('Vítimas')
 dfVitimasMunicipios = load.load_base_municipios()
 
-t = (time_ns() // 1000000000) - t
-print(f'Bases importadas com Sucesso! {t}s')
+print(f'Bases importadas com Sucesso! {time() - t:.2f}s')
 
 reqs = trata_requisicoes.Requisicoes(dfOcorrencias, dfVitimas, dfVitimasMunicipios)
 plots = trata_requisicoes.Plots(dfOcorrencias, dfVitimas)
