@@ -61,7 +61,7 @@
             A API (Application Programming Interface) desenvolvida busca gerenciar as bases de dados livres sobre Ocorrências Criminais (SINESP - Ministério da Justiça) disponíveis no link: http://dados.gov.br/dataset/sistema-nacional-de-estatisticas-de-seguranca-publica.<br>
             Todas suas requisições são interpretadas a partir do método GET, portanto tudo pode ser requisitado diretamente pela URL. As respostas para as requisições de consulta à API estão no formato JSON e possuem a seguinte estrutura:<br>
         </p>
-        <img src='Capturar.PNG' id='img1'>
+        <img src="{{url_for('static', filename='Capturar.PNG')}}" id="img1">
 
         <p>
             A API também pode retornar uma página HTML para requisições de plotagem de mapas e gráficos.<br>
@@ -70,7 +70,7 @@
         </p>
 
         <h2>Estrutura</h2>
-        <img src='estrutura.PNG' id='img2'>
+        <img src="{{url_for('static', filename='estrutura.PNG')}}" id="img2">
         
         
         <h2>Buscas</h2>
@@ -202,39 +202,38 @@
 
         <h2>Testes</h2>
         <h3>Base de Vítimas</h3>
-        <p><a href="http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE</a></p>
-        <p><a href="http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018</a></p>
-        <p><a href="http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le</a></p>
-        <p><a href="http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan</a></p>
+        <p><a href="/vitimas?key=5fdeb7c5&uf=CE" target="_blank" rel="noopener noreferrer">vitimas?key=5fdeb7c5&uf=CE</a></p>
+        <p><a href="/vitimas?key=5fdeb7c5&uf=CE&ano=2018" target="_blank" rel="noopener noreferrer">vitimas?key=5fdeb7c5&uf=CE&ano=2018</a></p>
+        <p><a href="/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le" target="_blank" rel="noopener noreferrer">vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le</a></p>
+        <p><a href="/vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan" target="_blank" rel="noopener noreferrer">vitimas?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan</a></p>
         <br>
 
         <h3>Base de Ocorrências</h3>
-        <p><a href="http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE</a></p>
-        <p><a href="http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018</a></p>
-        <p><a href="http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le</a></p>
-        <p><a href="http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan</a></p>
+        <p><a href="/ocorrencias?key=5fdeb7c5&uf=CE" target="_blank" rel="noopener noreferrer">ocorrencias?key=5fdeb7c5&uf=CE</a></p>
+        <p><a href="/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018" target="_blank" rel="noopener noreferrer">ocorrencias?key=5fdeb7c5&uf=CE&ano=2018</a></p>
+        <p><a href="/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le" target="_blank" rel="noopener noreferrer">ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le</a></p>
+        <p><a href="/ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan" target="_blank" rel="noopener noreferrer">ocorrencias?key=5fdeb7c5&uf=CE&ano=2018&crime=Le&mes=jan</a></p>
         <br>
 
         <h3>Base de Vítimas por município</h3>
-        <p><a href="http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco</a></p>
-        <p><a href="http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020</a></p>
-        <p><a href="http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan</a></p>
-        <p><a href="http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan&uf=ce" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan&uf=ce</a></p>
+        <p><a href="/vitimas_municipios?key=397a32e6&cid=Marco" target="_blank" rel="noopener noreferrer">vitimas_municipios?key=397a32e6&cid=Marco</a></p>
+        <p><a href="/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020" target="_blank" rel="noopener noreferrer">vitimas_municipios?key=397a32e6&cid=Marco&ano=2020</a></p>
+        <p><a href="/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan" target="_blank" rel="noopener noreferrer">vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan</a></p>
+        <p><a href="/vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan&uf=ce" target="_blank" rel="noopener noreferrer">vitimas_municipios?key=397a32e6&cid=Marco&ano=2020&mes=jan&uf=ce</a></p>
         <br>
 
         <h3>Buscas pré-cadastradas com agrupamento</h3>
-        <p><a href="http://127.0.0.1:5000/info/media_ocorrencias_ano?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/media_ocorrencias_anual?key=397a32e6</a></p>
-        <p><a href="http://127.0.0.1:5000/info/soma_municipios_estado?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/soma_municipios_estado?key=397a32e6</a></p>
-        <p><a href="http://127.0.0.1:5000/info/soma_vitimas_crime?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/soma_vitimas_crime?key=397a32e6</a></p>
-        <p><a href="http://127.0.0.1:5000/info/media_ocorrencias_crime_anual?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/media_ocorrencias_crime_anual?key=397a32e6</a></p>
-        <p><a href="http://127.0.0.1:5000/info/media_ocorrencias_crime_estado_anual?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/info/media_ocorrencias_crime_estado_anual?key=397a32e6</a></p>
+        <p><a href="/info/media_ocorrencias_ano?key=397a32e6" target="_blank" rel="noopener noreferrer">media_ocorrencias_anual</a></p>
+        <p><a href="/info/soma_municipios_estado?key=397a32e6" target="_blank" rel="noopener noreferrer">soma_municipios_estado</a></p>
+        <p><a href="/info/soma_vitimas_crime?key=397a32e6" target="_blank" rel="noopener noreferrer">soma_vitimas_crime</a></p>
+        <p><a href="/info/media_ocorrencias_crime_anual?key=397a32e6" target="_blank" rel="noopener noreferrer">media_ocorrencias_crime_anual</a></p>
+        <p><a href="/info/media_ocorrencias_crime_estado_anual?key=397a32e6" target="_blank" rel="noopener noreferrer">media_ocorrencias_crime_estado_anual</a></p>
         <br>
 
         <h3>Gráficos interativos</h3>
-        <p><a href="http://127.0.0.1:5000/plot/scatter_soma_ocorrencias?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/plot/scatter_soma_ocorrencias?key=397a32e6</a></p>
-        <p><a href="http://127.0.0.1:5000/plot/mapa_soma_ocorrencias?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/plot/mapa_soma_ocorrencias?key=397a32e6</a></p>
-        <p><a href="http://127.0.0.1:5000/plot/linha_soma_ocorrencias?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/plot/linha_soma_ocorrencias?key=397a32e6</a></p>
-        <p><a href="http://127.0.0.1:5000/plot/barras_media_ocorrencias?key=397a32e6" target="_blank" rel="noopener noreferrer">http://127.0.0.1:5000/plot/barras_media_ocorrencias?key=397a32e6</a></p>
+        <p><a href="/plot/mapa_soma_ocorrencias?key=397a32e6" target="_blank" rel="noopener noreferrer">Mapa de soma das ocorrências por estado</a></p>
+        <p><a href="/plot/linha_soma_ocorrencias?key=397a32e6" target="_blank" rel="noopener noreferrer">Gráfico de linhas da soma de ocorrências em cada estado</a></p>
+        <p><a href="/plot/barras_media_ocorrencias?key=397a32e6" target="_blank" rel="noopener noreferrer">Gráfico de barras da média de ocorrências em cada estados</a></p>
         <br>
     </body>
 </html>

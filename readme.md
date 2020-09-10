@@ -11,10 +11,15 @@
 ### 2.1 - Utilize o Putty para converter sua chave .pem para .ppk como mostrado no tutorial: https://medium.com/@praneeth.jm/launching-and-connecting-to-an-aws-ec2-instance-6678f660bbe6
 
 ## 3 - Execute a sequência de comandos abaixo no terminal da sua instância pelo Putty:
-### 3.1 - Baixe o script de configuração do ambiente.
-<code>wget https://raw.githubusercontent.com/SamuelHericles/Desenvolvendo_uma_API/master/02.C%C3%B3digos/configAPI.sh</code>
+### 3.0 - Baixe o script de configuração do ambiente.
+<code>wget https://raw.githubusercontent.com/SamuelHericles/Desenvolvendo_uma_API/master/API.tar.gz</code>
 
-### 3.2 -  Conceda permissões de leitura e escrita ao script de configuração.
+### 3.1 - Descompacte e entre na pasta Fontes/
+<code>tar -xzvf API.tar.gz</code>
+
+<code>cd Fontes/</code>
+
+### 3.2 - Conceda permissões de leitura e escrita ao script de configuração.
 <code>sudo chmod 777 configAPI.sh</code>
 
 ### 3.3 - Execute-o.
@@ -46,9 +51,6 @@
 > <IP Público de sua instância>/info/soma_ocorrencias_crime?key=<API_KEY>
 * Para requisitar os 5 estados menos perigosos:
 > <IP Público de sua instância>/info/menos_perigosos?key=<API_KEY>
-
-## Em construção ...
-
 
 ## #Equipe4 - Ciência de Dados - Desenvolvendo uma Nova API
 
