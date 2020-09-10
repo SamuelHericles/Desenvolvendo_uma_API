@@ -1,8 +1,7 @@
-#../!/bin/bash
-sed -i -e 's/\r$//' configAPI.sh
+#!/bin/bash
 sudo apt-get update
 # Instala o Python, Pip, Nginx e Gunicorn
-sudo apt-get --assume-yes install python3 python3-pip nginx gunicorn3 
+sudo apt-get --assume-yes install python3 python3-pip nginx gunicorn3
 # Instala dependêcias da API
 sudo pip3 install flask flask_restful pandas xlrd plotly
 # Copia a nova config e remove a antiga
