@@ -26,7 +26,7 @@ class Requisicoes:
         order = args['order'] if 'order' in args else 'DESC'
         return key, cid, uf, regiao, crime, ano, mes, r, order
 
-    def __add_cabecalho(self, data, base='', o='columns'):  # Add cabeçalho em todas as requisições
+    def __add_cabecalho(self, data, base='', orient='columns'):  # Add cabeçalho em todas as requisições
         if base != '':  # Diferenciar Infos de Bases
             column = data
         else:
@@ -35,7 +35,8 @@ class Requisicoes:
         q = len(data.index)
         s = column.sum()
         m = column.mean()
-        return f'{{"Info": "{base}", "Quantidade": {q}, "Soma": {s}, "Média": {m}, "Dados": {data.to_json(orient=o)}}}'
+        return f'{{"Info": "{base}", "Quantidade": {q}, "Soma": {s}, "Média": {m}, ' \
+               f'"Dados": {data.to_json(orient=orient, date_format="iso", date_unit="s")}}}'
 
     def get_bases(self, base):
         key, cid, uf, regiao, crime, ano, mes, r, order = self.__get_arguments(request.args)
@@ -56,7 +57,7 @@ class Requisicoes:
         elif order != '':  # Foi requisitado ordenamento sem ranking
             data = data.sort_values(data.columns[-1], ascending=(order == 'ASC'))
 
-        return loads(self.__add_cabecalho(data, o='records'))
+        return loads(self.__add_cabecalho(data, orient='records'))
 
     def get_infos(self, pergunta):
         key = request.args['key'].lower() if 'key' in request.args else ''
