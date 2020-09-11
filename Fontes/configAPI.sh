@@ -10,4 +10,4 @@ sudo rm /etc/nginx/sites-enabled/default
 # Restarta o serviço do Nginx
 sudo service nginx restart
 #Roda o script da API
-gunicorn3 app:app
+gunicorn3 app:app --daemon
